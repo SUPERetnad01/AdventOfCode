@@ -8,4 +8,14 @@ public class ReadInputFile
 		var pathToQuestion = Path.Combine(rootPath, "Days", $"Day{dayNumber}", "input.txt");
 		return pathToQuestion;
 	}
+
+	public static List<List<int>> GetGrid(string path) {
+		var input = File.ReadAllLines(path);
+		var grid = input
+			.Select(_ => 
+				_.Split(" ")
+				 .Select(_ => int.Parse(_))
+				 .ToList()).ToList();
+		return grid;
+	}
 }

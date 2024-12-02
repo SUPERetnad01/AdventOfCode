@@ -1,5 +1,5 @@
 ﻿namespace AdventOfCode2024.Tests.Days;
-public class DayOnePuzzels
+public class DayOnePuzzelsTests
 {
 	[Fact]
 	public void PartOne()
