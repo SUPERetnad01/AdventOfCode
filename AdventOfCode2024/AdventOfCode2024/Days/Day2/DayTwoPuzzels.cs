@@ -16,91 +16,93 @@ public static class DayTwoPuzzels
 
 	public static int PartOne(List<List<int>> reports)
 	{
-		var notSafeReports = 0;
-		foreach (var report in reports)
+		var amountOfIValidReports = reports.Where(ValidReport).Count();
+		return amountOfIValidReports;
+	}
+
+	private static bool ValidReport(List<int> report) 
+	{
+		var isAscending = report[0] - report[1] < 0;
+		var isDecending = report[0] - report[1] > 0;
+
+		var previousItem = report.First();
+
+		foreach (var item in report.Skip(1))
 		{
-
-			var previousItem = 0;
-			var isIncreasing = report[0] - report[1] < 0;
-			foreach(var item in report)
+			
+			var diffrence = item - previousItem;
+			previousItem = item;
+			// if order is not correct
+			if ((diffrence < 0 && isAscending) || (diffrence > 0 && isDecending))
 			{
-				if (previousItem == 0) {
-					previousItem = item;
-					continue;
-				}
+				return false;
+			}
 
-				var diffrence = item - previousItem;
-
-				previousItem = item;
-
-				if((isIncreasing && diffrence < 0) || (!isIncreasing && diffrence > 0)) {
-					notSafeReports++;
-					break;
-				}
-				
-
-				if (Math.Abs(diffrence) > 3 || diffrence == 0) 
-				{
-					notSafeReports++;
-					break;
-				}
-
+			// if the diffrence is to large
+			if (Math.Abs(diffrence) > 3 || diffrence == 0)
+			{
+				return false;
 			}
 		}
 
-		var totalSafeReports =  reports.Count - notSafeReports;
-		return totalSafeReports;
+		return true;
 	}
+
+
+	private static bool ValidReportPartTwo(List<int> report)
+	{
+		var isAscending = report[0] - report[1] < 0;
+		var isDecending = report[0] - report[1] > 0;
+
+		var amountOfErrorsInReport = 0;
+		var previousItem = report.First();
+
+		foreach (var item in report.Skip(1))
+		{
+			var diffrence = item - previousItem;
+	
+
+			// if order is not correct
+			if ((diffrence < 0 && isAscending) || (diffrence > 0 && isDecending))
+			{
+				if (amountOfErrorsInReport == 0) {
+					amountOfErrorsInReport++;
+					continue;
+				}
+
+				return false;
+			}
+
+			// if the diffrence is to large
+			if (Math.Abs(diffrence) > 3 || diffrence == 0)
+			{
+				if(amountOfErrorsInReport == 0) {
+					amountOfErrorsInReport++;
+					continue;
+				}
+
+				return false;
+			}
+
+			previousItem = item;
+		}
+
+		return true;
+	}
+
 
 	public static int PartTwo(List<List<int>> reports)
 	{
-		var notSafeReports = 0;
-		foreach (var report in reports)
-		{
+		var amountOfIValidReports = reports.Where(_ => !ValidReportPartTwo(_));
+		var reversedInvalidReports = amountOfIValidReports.Select(_ => {
+			_.Reverse();
+			return _;
+		});
 
-			var previousItem = 0;
-			var amountOfErrors = 0;
-			var isIncreasing = report[0] - report[1] < 0;
-			foreach (var item in report)
-			{
-				if (previousItem == 0)
-				{
-					previousItem = item;
-					continue;
-				}
+		var finalAmountOfFailedReports = reversedInvalidReports.Where(_ => !ValidReportPartTwo(_)).Count();
 
-				var diffrence = item - previousItem;
+		var totalwithOutReverse = reports.Count() - finalAmountOfFailedReports;
 
-			
-
-				if ((isIncreasing && diffrence < 0) || (!isIncreasing && diffrence > 0))
-				{
-					if (amountOfErrors > 0) {
-						notSafeReports++;
-						break;
-					}
-					amountOfErrors++;
-					continue;
-			
-				}
-
-
-				if (Math.Abs(diffrence) > 3 || diffrence == 0)
-				{
-					if (amountOfErrors > 0)
-					{
-						notSafeReports++;
-						break;
-					}
-					amountOfErrors++;
-					continue;
-				}
-
-				previousItem = item;
-			}
-		}
-
-		var totalSafeReports = reports.Count - notSafeReports;
-		return totalSafeReports;
+		return totalwithOutReverse;	
 	}
 }

@@ -15,7 +15,7 @@ public class DayTwoPuzzelsTests
 			new() { 1,3,2,4,5 },
 			new() { 8,6,4,4,1 },
 			new() { 1,3,6,7,9 },
-			
+
 		};
 
 		var awnser = DayTwoPuzzels.PartOne(reports);
@@ -36,11 +36,17 @@ public class DayTwoPuzzelsTests
 			new() { 8,6,4,4,1 },
 			new() { 1,3,6,7,9 },
 
+			new() { 5,1,3,6,7,9 },
+			new() { 1,3,6,9,11,11 },
+			new() { 1,1,3,6,9,11},
+			new() { 1,3,6,9,13},
+			new() { 1,5,6,9,11},
+
 		};
 
 		var awnser = DayTwoPuzzels.PartTwo(reports);
 
 
-		Assert.Equal(4, awnser);
+		Assert.Equal(9, awnser);
 	}
 }
