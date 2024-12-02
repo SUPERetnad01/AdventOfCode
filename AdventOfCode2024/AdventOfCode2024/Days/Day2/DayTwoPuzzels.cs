@@ -51,8 +51,7 @@ public static class DayTwoPuzzels
 
 	private static bool ValidReportPartTwo(List<int> report)
 	{
-		var isAscending = report[0] - report[1] < 0;
-		var isDecending = report[0] - report[1] > 0;
+		var originalSign = Math.Sign(report[0] - report[1]);
 
 		var amountOfErrorsInReport = 0;
 		var previousItem = report.First();
@@ -60,10 +59,11 @@ public static class DayTwoPuzzels
 		foreach (var item in report.Skip(1))
 		{
 			var diffrence = item - previousItem;
-	
+
+			var newSign = Math.Sign(previousItem - item);
 
 			// if order is not correct
-			if ((diffrence < 0 && isAscending) || (diffrence > 0 && isDecending))
+			if (newSign != originalSign)
 			{
 				if (amountOfErrorsInReport == 0) {
 					amountOfErrorsInReport++;
