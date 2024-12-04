@@ -52,7 +52,7 @@ public static class DayFourPuzzels
 	}
 
 	private static bool CheckTrueXMAS(List<(Cell<char>, DIRECTION)> _) {
-		var corners = new List<DIRECTION>() { DIRECTION.NORTHEAST, DIRECTION.NORTHWEST, DIRECTION.SOUTHEAST, DIRECTION.SOUTHWEST };
+		var corners = DirectionHelper.Corners;
 		var allMCorners = _.Where(_ => _.Item1.Value == 'M' && corners.Contains(_.Item2)).ToList();
 		var allSCorners = _.Where(_ => _.Item1.Value == 'S' && corners.Contains(_.Item2)).ToList();
 

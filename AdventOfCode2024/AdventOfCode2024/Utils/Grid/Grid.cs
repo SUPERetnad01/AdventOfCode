@@ -73,4 +73,10 @@ public static class DirectionHelper {
 		};
 		return isOtherCorner;
 	}
+
+	public static List<DIRECTION> Corners { get {
+			return new List<DIRECTION>() { DIRECTION.NORTHEAST, DIRECTION.NORTHWEST, DIRECTION.SOUTHEAST, DIRECTION.SOUTHWEST };
+
+		}
+	}
 }
