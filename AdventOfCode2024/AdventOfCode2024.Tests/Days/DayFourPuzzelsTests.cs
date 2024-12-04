@@ -1,4 +1,4 @@
-﻿using AdventOfCode2024.Days.Day4;
+﻿using AdventOfCode2024.Utils.Grid;
 
 namespace AdventOfCode2024.Tests.Days;
 
@@ -21,10 +21,28 @@ public class DayFourPuzzelsTests
 		}.Select(_ => _.ToList())
 		.ToList();
 
+		var grid = new Grid<char>(crosswordPuzzels);
+		var x = grid.Cells
+			.Where(_ => _.Value == 'X')
+			.Select(_ => grid.GetCellsForEachDirection(_))
+			.ToList();
 
-		var awnser = DayFourPuzzels.PartOne(crosswordPuzzels);
 
-		Assert.Equal(18, awnser);
+		foreach (var l in x)
+		{
+			var isXmas = l.Where(_ => _.Item1.Value == 'M');
+			var p = isXmas.Where(_ => grid.GetCellBasedOnDirection(_.Item1, _.Item2)?.Value == 'A');
+			var r = p.Where(_ => grid.GetCellBasedOnDirection(_.Item1, _.Item2)?.Value == 'S');
+
+		}
+
+
+
+
+
+		//var awnser = DayFourPuzzels.PartOne(crosswordPuzzels);
+
+		Assert.Equal(18, 1);
 	}
 
 	[Fact]
