@@ -4,7 +4,7 @@ namespace AdventOfCode2024.Days.Day1;
 
 public static class DayOnePuzzels
 {
-	public static void HandeQuestions() 
+	public static void HandleQuestions() 
 	{
 		var inputFilePath = ReadInputFile.GetPathToInput(1);
 	

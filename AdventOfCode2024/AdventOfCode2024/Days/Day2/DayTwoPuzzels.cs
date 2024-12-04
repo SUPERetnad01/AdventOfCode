@@ -4,7 +4,7 @@ namespace AdventOfCode2024.Days.Day2;
 
 public static class DayTwoPuzzels
 {
-	public static void HandeQuestions() 
+	public static void HandleQuestions() 
 	{
 		var grid = ReadInputFile.GetGrid(ReadInputFile.GetPathToInput(2));
 		var partOne = PartOne(grid);

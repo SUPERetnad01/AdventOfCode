@@ -18,4 +18,11 @@ public class ReadInputFile
 				 .ToList()).ToList();
 		return grid;
 	}
+
+	public static List<List<char>> GetGridChar(string path)
+	{
+		var input = File.ReadAllLines(path);
+		var grid = input.Select(_ => _.ToList()).ToList();
+		return grid;
+	}
 }

@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AdventOfCode2024.Utils;
+using AdventOfCode2024.Utils.Grid;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,148 +8,68 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode2024.Days.Day4;
 
-public static class DayFourPuzzels
+public static class DayFourPuzzels 
 {
-	public static void HandlePuzzles()
+	public static void HandleQuestions()
 	{
+		var grid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToInput(4));
 
+		var awnserOne = PartOne(grid);
+		Console.WriteLine($"Day 4 part one: {awnserOne}");
+
+		var awnserTwo = PartTwo(grid);
+		Console.WriteLine($"Day 4 part two: {awnserTwo}");
 	}
 
 	public static int PartOne(List<List<char>> crosswordPuzzels)
 	{
+		var grid = new Grid<char>(crosswordPuzzels);
 
-		var x = 0;
-		for (int i = 0; i < crosswordPuzzels.Count - 1; i++)
-		{
-			for (var j = 0; j < crosswordPuzzels[i].Count; j++)
-			{
-				var am = AmountOfXmas(crosswordPuzzels, i, j);
-				x+= am;
-			}
-		}
+		var amountOfXmas = grid.Cells
+			.Where(_ => _.Value == 'X')
+			.SelectMany(_ => grid.GetCellsForEachDirection(_)?.Where(_ => _.Item1.Value == 'M'))
+			.Where(_ => grid.GetCellBasedOnDirection(_.Item1, _.Item2)?.Value == 'A')
+			.Select(_ => (grid.GetCellBasedOnDirection(_.Item1, _.Item2), _.Item2))
+			.Where(_ => grid.GetCellBasedOnDirection(_.Item1, _.Item2)?.Value == 'S')
+			.Select(_ => (grid.GetCellBasedOnDirection(_.Item1, _.Item2), _.Item2))
+			.Count();
 
-		return x;
+		return amountOfXmas;
 	}
 
-	private static int AmountOfXmas(List<List<char>> crosswordPuzzles, int rowIndex, int columnIndex)
+	public static int PartTwo(List<List<char>> crosswordPuzzels)
 	{
-		var center = crosswordPuzzles[rowIndex][columnIndex];
-		if (center != 'X' && center != 'S') {
-			return 0;
-		}
+		
+		var grid = new Grid<char>(crosswordPuzzels);
 
-		var xmasWest = HasXMASWest(crosswordPuzzles, rowIndex, columnIndex, center);
-		var xmasNorth = HasXMASNorth(crosswordPuzzles, rowIndex, columnIndex, center);
-		var xmasNorthEast = HasXMASNorthWest(crosswordPuzzles, rowIndex, columnIndex, center);
-		var xmasSouthEast = HasXMASSouthWest(crosswordPuzzles, rowIndex, columnIndex, center);
-	
+		var amountOfAss = grid.Cells
+			.Where(_ => _.Value == 'A')
+			.Select(_ => grid.GetCellsForEachDirection(_)).ToList();
 
-		return xmasWest + xmasNorth + xmasNorthEast + xmasSouthEast;
+		var amountOfTrueXmas = amountOfAss.Where(CheckTrueXMAS);
+
+		return amountOfTrueXmas.Count();
 	}
 
-	private static int HasXMASSouthWest(List<List<char>> crosswordPuzzles, int rowIndex, int columnIndex, char center)
-	{
-		var HasAmountOfSpaceLeftNorth = rowIndex >= 3;
-		var HasAmountOfSpaceLeftEast = columnIndex >= 3;
-		if (!HasAmountOfSpaceLeftEast || !HasAmountOfSpaceLeftNorth)
+	private static bool CheckTrueXMAS(List<(Cell<char>, DIRECTION)> _) {
+		var corners = new List<DIRECTION>() { DIRECTION.NORTHEAST, DIRECTION.NORTHWEST, DIRECTION.SOUTHEAST, DIRECTION.SOUTHWEST };
+		var allMCorners = _.Where(_ => _.Item1.Value == 'M' && corners.Contains(_.Item2)).ToList();
+		var allSCorners = _.Where(_ => _.Item1.Value == 'S' && corners.Contains(_.Item2)).ToList();
+
+		if (allMCorners.Count() != 2 || allSCorners.Count() != 2)
 		{
-			return 0;
+			return false;
 		}
 
-		var secondLetter = crosswordPuzzles[rowIndex - 1][columnIndex - 1];
-		var thirdLetter = crosswordPuzzles[rowIndex - 2][columnIndex - 2];
-		var fouthLetter = crosswordPuzzles[rowIndex - 3][columnIndex - 3];
+		var checkM = DirectionHelper.IsOppisiteCorner(allMCorners.First().Item2, allMCorners[1].Item2);
+		var checkS = DirectionHelper.IsOppisiteCorner(allSCorners.First().Item2, allSCorners[1].Item2);
 
-
-
-		if (center == 'X' & secondLetter == 'M' && thirdLetter == 'A' && fouthLetter == 'S')
+		if (checkM || checkS)
 		{
-			return 1;
+			return false;
 		}
 
-		if (center == 'S' & secondLetter == 'A' && thirdLetter == 'M' && fouthLetter == 'X')
-		{
-			return 1;
-		}
-
-		return 0;
+		return true;
 	}
 
-	private static int HasXMASWest(List<List<char>> crosswordPuzzles, int rowIndex, int columnIndex, char center)
-	{
-		var HasAmountOfSpaceLeft = columnIndex >= 3;
-		if (!HasAmountOfSpaceLeft) {
-			return 0;
-		}
-
-		var secondLetter = crosswordPuzzles[rowIndex][columnIndex - 1];
-		var thirdLetter = crosswordPuzzles[rowIndex][columnIndex - 2];
-		var fouthLetter = crosswordPuzzles[rowIndex][columnIndex - 3];
-
-		if (center == 'X' & secondLetter == 'M' && thirdLetter == 'A' && fouthLetter == 'S')
-		{
-			return 1;
-		}
-
-		if (center == 'S' & secondLetter == 'A' && thirdLetter == 'M' && fouthLetter == 'X')
-		{
-			return 1;
-		}
-
-		return 0;
-	}
-
-	private static int HasXMASNorth(List<List<char>> crosswordPuzzles, int rowIndex, int columnIndex, char center)
-	{
-		var HasAmountOfSpaceLeft = crosswordPuzzles.Count -1 > 3 + rowIndex;
-		if (!HasAmountOfSpaceLeft)
-		{
-			return 0;
-		}
-
-		var secondLetter = crosswordPuzzles[rowIndex + 1][columnIndex];
-		var thirdLetter = crosswordPuzzles[rowIndex + 2][columnIndex];
-		var fouthLetter = crosswordPuzzles[rowIndex + 3][columnIndex];
-
-
-
-		if (center == 'X' & secondLetter == 'M' && thirdLetter == 'A' && fouthLetter == 'S')
-		{
-			return 1;
-		}
-
-		if(center == 'S' & secondLetter == 'A' && thirdLetter == 'M' && fouthLetter == 'X')
-		{
-			return 1;
-		}
-
-		return 0;
-	}
-	private static int HasXMASNorthWest(List<List<char>> crosswordPuzzles, int rowIndex, int columnIndex, char center)
-	{
-		var HasAmountOfSpaceLeftNorth = crosswordPuzzles.Count - 1 > 3 + rowIndex;
-		var HasAmountOfSpaceLeftEast = columnIndex >= 3;
-		if (!HasAmountOfSpaceLeftEast || !HasAmountOfSpaceLeftNorth)
-		{
-			return 0;
-		}
-
-		var secondLetter = crosswordPuzzles[rowIndex + 1][columnIndex - 1];
-		var thirdLetter = crosswordPuzzles[rowIndex + 2][columnIndex - 2];
-		var fouthLetter = crosswordPuzzles[rowIndex + 3][columnIndex - 3];
-
-
-
-		if (center == 'X' & secondLetter == 'M' && thirdLetter == 'A' && fouthLetter == 'S')
-		{
-			return 1;
-		}
-
-		if (center == 'S' & secondLetter == 'A' && thirdLetter == 'M' && fouthLetter == 'X')
-		{
-			return 1;
-		}
-
-		return 0;
-	}
 }

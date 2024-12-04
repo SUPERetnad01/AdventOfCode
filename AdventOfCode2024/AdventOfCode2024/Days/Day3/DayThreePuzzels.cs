@@ -10,17 +10,17 @@ namespace AdventOfCode2024.Days.Day3;
 
 public static class DayThreePuzzels
 {
-	public static void HandeQuestions()
+	public static void HandleQuestions()
 	{
 
 		var path = ReadInputFile.GetPathToInput(3);
 		var input = File.ReadAllText(path);
 
 		var partOne = PartOne(input);
-		Console.WriteLine($"Day2 PartOne: {partOne}");
+		Console.WriteLine($"Day 3 PartOne: {partOne}");
 
 		var partTwo = PartTwo(input);
-		Console.WriteLine($"Day2 PartOne: {partTwo}");
+		Console.WriteLine($"Day 3 PartTwo: {partTwo}");
 	}
 
 	public static int PartOne(string corruptedInstruction)

@@ -58,3 +58,19 @@ public enum DIRECTION
 	SOUTHWEST,
 	SOUTHEAST
 }
+public static class DirectionHelper {
+
+	public static bool IsOppisiteCorner(this DIRECTION direction,DIRECTION possibleNeighbour) 
+	{
+		var isOtherCorner = direction switch
+		{
+			DIRECTION.NORTHWEST => possibleNeighbour == DIRECTION.SOUTHEAST,
+			DIRECTION.NORTHEAST => possibleNeighbour == DIRECTION.SOUTHWEST,
+			DIRECTION.SOUTHEAST => possibleNeighbour == DIRECTION.NORTHWEST,
+			DIRECTION.SOUTHWEST => possibleNeighbour == DIRECTION.NORTHEAST,
+		
+			_ => throw new NotImplementedException(),
+		};
+		return isOtherCorner;
+	}
+}
