@@ -10,7 +10,8 @@ namespace AdventOfCode2024.Days.Day3;
 
 public static class DayThreePuzzels
 {
-	public static void HandeQuestions() {
+	public static void HandeQuestions()
+	{
 
 		var path = ReadInputFile.GetPathToInput(3);
 		var input = File.ReadAllText(path);
@@ -22,20 +23,14 @@ public static class DayThreePuzzels
 		Console.WriteLine($"Day2 PartOne: {partTwo}");
 	}
 
-	public static int PartOne(string corruptedInstruction) 
+	public static int PartOne(string corruptedInstruction)
 	{
 		string pattern = @"mul\((\d{1,3}),(\d{1,3})\)";
 		var matches = Regex.Matches(corruptedInstruction, pattern).ToList();
 
-		var total = 0;
-
-		foreach (var match in matches) {
-			var firstnumber = match.Groups[1].Value;
-			var secondNumber = match.Groups[2].Value;
-
-			total += int.Parse(firstnumber) * int.Parse(secondNumber);
-		}
-
+		var total = matches
+			.Select(_ => int.Parse(_.Groups[1].Value) * int.Parse(_.Groups[2].Value))
+			.Sum();
 
 		return total;
 	}
