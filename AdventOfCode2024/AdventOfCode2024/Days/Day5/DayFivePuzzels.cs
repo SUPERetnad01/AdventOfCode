@@ -1,7 +1,4 @@
-﻿using AdventOfCode2024.Utils.Grid;
-using AdventOfCode2024.Utils;
-using System.Security.Cryptography;
-
+﻿
 namespace AdventOfCode2024.Days.Day5;
 
 public class DayFivePuzzels
@@ -13,7 +10,8 @@ public class DayFivePuzzels
 		var pathToManuals = Path.Combine(rootPath, "Days", $"Day5", "inputManuals.txt");
 
 		var orderingRules = File.ReadAllLines(pathToOrderingRules)
-			.Select(_ => {
+			.Select(_ =>
+			{
 				var xandY = _.Split("|");
 
 				return new PageOrderingRule()
@@ -28,49 +26,35 @@ public class DayFivePuzzels
 			.Select(_ => _.Split(",").Select(_ => int.Parse(_)).ToList()
 			).ToList();
 
-		var awnserOne = PartOne(orderingRules,manuals);
+		var awnserOne = PartOne(orderingRules, manuals);
 		Console.WriteLine($"Day 5 part one: {awnserOne}");
 
-		//var awnserTwo = PartTwo();
-		//Console.WriteLine($"Day 4 part two: {awnserTwo}");
+		var awnserTwo = PartTwo(orderingRules, manuals);
+		Console.WriteLine($"Day 5 part two: {awnserTwo}");
 	}
 
 	public static int PartOne(List<PageOrderingRule> orderingRules, List<List<int>> manuals)
 	{
 		var middleNumbers = 0;
-		foreach(var manual in manuals)
+		foreach (var manual in manuals)
 		{
-			var isInValidmanual = orderingRules
-				.Where(_ => manual.Contains(_.RuleX) && manual.Contains(_.RuleY))
-				.Select(_ => new PageOrderingRule()
-				{
-					RuleX = _.RuleX,
-					RuleY = _.RuleY,
-					XIndex = manual.IndexOf(_.RuleX),
-					YIndex = manual.IndexOf(_.RuleY)
-				})
-				.Select(_ => _.IsValidRule())
-				.Contains(false);
+			var (isValidManual, _) = IsValidManual(manual, orderingRules);
 
-			if (isInValidmanual)
+			if (!isValidManual)
 			{
 				continue;
 			}
 
-			middleNumbers  += manual[manual.Count / 2];
+			middleNumbers += manual[manual.Count / 2];
 
 		}
 
 		return middleNumbers;
 	}
 
-	private static List<(List<int>, List<PageOrderingRule>)> GetIncorectManuals(List<PageOrderingRule> orderingRules, List<List<int>> manuals)
+	public static (bool, List<PageOrderingRule>) IsValidManual(List<int> manual, List<PageOrderingRule> orderingRules)
 	{
-		var incorectManuaml = new List<(List<int>,List<PageOrderingRule>)>();
-
-		foreach (var manual in manuals)
-		{
-			var setupOrderingRules = orderingRules
+		var setupOrderingRules = orderingRules
 				.Where(_ => manual.Contains(_.RuleX) && manual.Contains(_.RuleY))
 				.Select(_ => new PageOrderingRule()
 				{
@@ -80,28 +64,53 @@ public class DayFivePuzzels
 					YIndex = manual.IndexOf(_.RuleY)
 				}).ToList();
 
-			var isInvalidmanual = setupOrderingRules
-				.Select(_ => _.IsValidRule())
-				.Contains(false);
+		var isInvalidManual = setupOrderingRules
+			.Select(_ => _.IsValidRule())
+			.Contains(false);
 
-			if (isInvalidmanual)
-			{
-				incorectManuaml.Add((manual, setupOrderingRules));
-			}
-		}
-		return incorectManuaml;
+		return (!isInvalidManual, setupOrderingRules);
 	}
+
 
 	public static int PartTwo(List<PageOrderingRule> orderingRules, List<List<int>> manuals)
 	{
+		var incorrectManuals = manuals
+			.Select(_ => (_, IsValidManual(_, orderingRules)))
+			.Where(_ => _.Item2.Item1 == false)
+			.Select(_ => (_.Item1, _.Item2.Item2));
 
-		var incorrectManuals = GetIncorectManuals(orderingRules,manuals);
+		var result = incorrectManuals
+		   .Select(_ => SolveManual(_.Item1, _.Item2).Item1)
+		   .Select(_ => _[_.Count / 2])
+		   .Sum();
 
-		return 1;
+		return result;
+	}
+
+	private static (List<int>, List<PageOrderingRule>) SolveManual(List<int> manual, List<PageOrderingRule> pageOrderingRules)
+	{
+		var faultyRule = pageOrderingRules.Where(_ => !_.IsValidRule()).First();
+
+		if (faultyRule == null)
+		{
+			return (manual, pageOrderingRules);
+		}
+		manual[faultyRule.XIndex] = faultyRule.RuleY;
+		manual[faultyRule.YIndex] = faultyRule.RuleX;
+
+
+		var valid = IsValidManual(manual, pageOrderingRules);
+		if (!valid.Item1)
+		{
+			return SolveManual(manual, valid.Item2);
+		}
+
+		return (manual, pageOrderingRules);
 	}
 }
 
-public class PageOrderingRule { 
+public class PageOrderingRule
+{
 	public int RuleX { get; set; }
 	public int RuleY { get; set; }
 

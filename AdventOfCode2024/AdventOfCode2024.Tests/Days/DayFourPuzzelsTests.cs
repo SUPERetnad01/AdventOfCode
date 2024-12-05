@@ -1,5 +1,4 @@
 ﻿using AdventOfCode2024.Days.Day4;
-using AdventOfCode2024.Utils.Grid;
 
 namespace AdventOfCode2024.Tests.Days;
 
@@ -25,7 +24,7 @@ public class DayFourPuzzelsTests
 
 		var awnser = DayFourPuzzels.PartOne(crosswordPuzzels);
 
-		Assert.Equal(18,awnser);
+		Assert.Equal(18, awnser);
 	}
 
 	[Fact]
