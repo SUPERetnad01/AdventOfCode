@@ -3,9 +3,11 @@ using AdventOfCode2024.Days.Day1;
 using AdventOfCode2024.Days.Day2;
 using AdventOfCode2024.Days.Day3;
 using AdventOfCode2024.Days.Day4;
+using AdventOfCode2024.Days.Day5;
 
 DayOnePuzzels.HandleQuestions();
 DayTwoPuzzels.HandleQuestions();
 DayThreePuzzels.HandleQuestions();
-DayFourPuzzels.HandleQuestions();
+//DayFourPuzzels.HandleQuestions(); // takes about 10 seconds
+DayFivePuzzels.HandleQuestions();
 Console.ReadLine();
