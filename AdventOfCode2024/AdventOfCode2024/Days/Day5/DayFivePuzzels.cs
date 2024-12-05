@@ -64,8 +64,39 @@ public class DayFivePuzzels
 		return middleNumbers;
 	}
 
-	public static int PartTwo()
+	private static List<(List<int>, List<PageOrderingRule>)> GetIncorectManuals(List<PageOrderingRule> orderingRules, List<List<int>> manuals)
 	{
+		var incorectManuaml = new List<(List<int>,List<PageOrderingRule>)>();
+
+		foreach (var manual in manuals)
+		{
+			var setupOrderingRules = orderingRules
+				.Where(_ => manual.Contains(_.RuleX) && manual.Contains(_.RuleY))
+				.Select(_ => new PageOrderingRule()
+				{
+					RuleX = _.RuleX,
+					RuleY = _.RuleY,
+					XIndex = manual.IndexOf(_.RuleX),
+					YIndex = manual.IndexOf(_.RuleY)
+				}).ToList();
+
+			var isInvalidmanual = setupOrderingRules
+				.Select(_ => _.IsValidRule())
+				.Contains(false);
+
+			if (isInvalidmanual)
+			{
+				incorectManuaml.Add((manual, setupOrderingRules));
+			}
+		}
+		return incorectManuaml;
+	}
+
+	public static int PartTwo(List<PageOrderingRule> orderingRules, List<List<int>> manuals)
+	{
+
+		var incorrectManuals = GetIncorectManuals(orderingRules,manuals);
+
 		return 1;
 	}
 }
