@@ -45,6 +45,42 @@ public class Grid<T>
 		var cellBasedOnDirection = Cells.FirstOrDefault(_ => _.Coordinate.X == coordinate.X && _.Coordinate.Y == coordinate.Y);
 		return cellBasedOnDirection;
 	}
+
+	public List<Cell<T>> GetAllCellsInSpecificDirection(Cell<T> cell, DIRECTION direction)
+	{
+		var cells = direction switch
+		{
+			DIRECTION.NORTH => Cells.Where(_ => _.Coordinate.X == cell.Coordinate.X && _.Coordinate.Y < cell.Coordinate.Y),
+			DIRECTION.SOUTH => Cells.Where(_ => _.Coordinate.X == cell.Coordinate.X && _.Coordinate.Y > cell.Coordinate.Y),
+			DIRECTION.EAST => Cells.Where(_ => _.Coordinate.X > cell.Coordinate.X && _.Coordinate.Y == cell.Coordinate.Y),
+			DIRECTION.WEST => Cells.Where(_ => _.Coordinate.X < cell.Coordinate.X && _.Coordinate.Y == cell.Coordinate.Y),
+			_ => throw new NotImplementedException(),
+		};
+
+		return cells.ToList();
+	}
+
+	public void PrintGrid() 
+	{
+		int maxX = Cells.Max(c => c.Coordinate.X);
+		int maxY = Cells.Max(c => c.Coordinate.Y);
+
+		T[,] grid = new T[maxY + 1, maxX + 1];
+
+		foreach (var cell in Cells)
+		{
+			grid[cell.Coordinate.Y, cell.Coordinate.X] = cell.Value;
+		}
+
+		for (int y = 0; y <= maxY; y++)
+		{
+			for (int x = 0; x <= maxX; x++)
+			{
+				Console.Write(grid[y, x]?.ToString() ?? " " + "\t");
+			}
+			Console.WriteLine();
+		}
+	}
 }
 
 public enum DIRECTION
