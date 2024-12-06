@@ -5,6 +5,14 @@ public class Cell<T>
 	public Coordinate Coordinate { get; set; }
 	public T Value { get; set; }
 
+	public int Distance(Coordinate otheCoordinate) 
+	{ 
+		var comparedX = Math.Abs(otheCoordinate.X - Coordinate.X);
+		var comparedY = Math.Abs(otheCoordinate.Y - Coordinate.Y);
+
+		return comparedX + comparedY;
+	}
+
 }
 
 public class Coordinate

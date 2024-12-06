@@ -24,6 +24,17 @@ public class Grid<T>
 		}
 	}
 
+	public Grid(List<Cell<T>> cells)
+	{
+		Cells = cells;
+	}
+
+
+	public object Clone() {
+		return this.MemberwiseClone();
+	}
+
+
 	public Cell<T>? GetCellByCoordinate(Coordinate cords)
 	{
 		var cell = Cells.FirstOrDefault(_ => _.Coordinate.X == cords.X && _.Coordinate.Y == cords.Y);

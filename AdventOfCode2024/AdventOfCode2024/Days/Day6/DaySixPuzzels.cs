@@ -2,6 +2,7 @@
 using AdventOfCode2024.Utils;
 using AdventOfCode2024.Utils.Grid;
 using System;
+using System.Collections.Immutable;
 
 namespace AdventOfCode2024.Days.Day6;
 
@@ -11,26 +12,10 @@ public static class DaySixPuzzels
 	{
 		var grid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToInput(6));
 
-		//var awnserOne = PartOne(grid);
-		//Console.WriteLine($"Day 6 part one: {awnserOne}");
+		var awnserOne = PartOne(grid);
+		Console.WriteLine($"Day 6 part one: {awnserOne}");
 
-		var normalInput = @"
-....#.....
-.........#
-..........
-..#.......
-.......#..
-..........
-.#..^.....
-........#.
-#.........
-......#...";
-
-		var labBluePrint = normalInput
-			.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
-			.Select(_ => _.ToList()).ToList();
-
-		var awnserTwo = PartTwo(labBluePrint);
+		var awnserTwo = PartTwo(grid);
 		Console.WriteLine($"Day 6 part two: {awnserTwo}");
 	}
 
@@ -49,6 +34,7 @@ public static class DaySixPuzzels
 
 	public static (Grid<char> grid, Cell<char> currentPos) Walk(Grid<char> grid, Cell<char> currentPos)
 	{	
+
 		var currentDirection = CurrentDirection(currentPos.Value);
 
 		var cellInCurrentDirection = grid.GetCellBasedOnDirection(currentPos, currentDirection);
@@ -72,75 +58,109 @@ public static class DaySixPuzzels
 
 	public static int PartTwo(List<List<char>> labBluePrint)
 	{
-		var labGrid = new Grid<char>(labBluePrint);
+		var firstWalkOfGrid = new Grid<char>(labBluePrint);
 
-		var startingPoint = labGrid.Cells.FirstOrDefault(_ => _.Value == '^');
+		var startingPoint = firstWalkOfGrid.Cells.FirstOrDefault(_ => _.Value == '^');
 
-		var (grid, currentPos, amountOfloops) = WalkWithObstruction(labGrid, startingPoint);
+		var (grid, currentPos) = Walk(firstWalkOfGrid, startingPoint);
 
+		var allCelsWithX = grid.Cells
+			.Where(_ => _.Value == 'X')
+			.ToList();
 
-		return amountOfloops;
+		var cleanGrid = new Grid<char>(labBluePrint);
+		startingPoint.Value = '^';
+
+		var total = WalkWithObstruction(cleanGrid, allCelsWithX, startingPoint);
+
+		return total;
 	}
 
-	public static (Grid<char> grid, Cell<char> currentPos, int amountOfloops) WalkWithObstruction(Grid<char> grid, Cell<char> currentPos, int amountOfLoops = 0,bool boxAlreadyPlaced = false)
+	public static int WalkWithObstruction(Grid<char> grid, List<Cell<char>> allWalkedCells, Cell<char> startingPos) 
+	{
+		var cleanGrid = grid.Cells.Select(_ => 
+			new Cell<char>() { 
+				Value = _.Value,
+				Coordinate = _.Coordinate,
+			}
+		).ToList();
+
+
+		var total = 0;
+		foreach(var cell in allWalkedCells)
+		{
+			var cleanGridCells = grid.Cells.Select(_ =>
+				new Cell<char>()
+				{
+					Value = _.Value,
+					Coordinate = _.Coordinate,
+				}
+			).ToList();
+
+			var newGrid = new Grid<char>(cleanGridCells);
+
+			var startingPosition = new Cell<char> { Value = startingPos.Value, Coordinate = startingPos.Coordinate };
+
+			var theCell = newGrid.Cells.FirstOrDefault(_ => _.Coordinate.X == cell.Coordinate.X && _.Coordinate.Y == cell.Coordinate.Y);
+
+			if (theCell == null || 
+				(theCell.Coordinate.X == startingPosition.Coordinate.X && theCell.Coordinate.Y == startingPosition.Coordinate.X)
+				)
+			{
+				continue;
+			}
+
+			theCell.Value = 'O';
+
+			var (isInfinite, gridd, _) = IsInfinitePath(newGrid, startingPosition, []);
+
+
+
+			if (isInfinite)
+			{
+				total++;
+				Console.Clear();
+				Console.WriteLine(total.ToString());
+				
+			}
+		}
+		return total;
+	
+	}
+
+
+	public static (bool isInfinite, Grid<char> grid, Cell<char> currentPos) IsInfinitePath(Grid<char> grid, Cell<char> currentPos, List<(Coordinate, DIRECTION)> listMap)
 	{
 		var currentDirection = CurrentDirection(currentPos.Value);
 
 		var cellInCurrentDirection = grid.GetCellBasedOnDirection(currentPos, currentDirection);
 
-		if (cellInCurrentDirection == null)
+        if (cellInCurrentDirection == null)
 		{
 			currentPos.Value = 'X';
-			return (grid, currentPos, amountOfLoops);
+			return (false, grid, currentPos);
 		}
 
-		if (cellInCurrentDirection.Value == '#')
+		listMap.Add((currentPos.Coordinate,currentDirection));
+
+		var isAlreadyInList = listMap.Where(_ => 
+			_.Item1.Y == cellInCurrentDirection.Coordinate.Y &&
+			_.Item1.X == cellInCurrentDirection.Coordinate.X && 
+			_.Item2 == currentDirection).Count();
+
+		if(isAlreadyInList > 1)
 		{
-			var rotatedPos = Turn90Degrees(currentPos.Value);
-			var newDirection = CurrentDirection(rotatedPos);
-			var newCell = grid.GetCellBasedOnDirection(currentPos, newDirection);
-			currentPos.Value = '+';
-			newCell.Value = rotatedPos;
-			return WalkWithObstruction(grid, newCell, amountOfLoops, boxAlreadyPlaced);
+			return (true, grid, currentPos);
 		}
 
-		if (CanCreateInfiniteLoop(grid, currentPos,boxAlreadyPlaced))
+		if (cellInCurrentDirection.Value == '#' || cellInCurrentDirection.Value == 'O')
 		{
-			amountOfLoops++;
+			currentPos.Value = Turn90Degrees(currentPos.Value);
+			return IsInfinitePath(grid, currentPos,listMap);
 		}
-
 		cellInCurrentDirection.Value = currentPos.Value;
 		currentPos.Value = 'X';
-		return WalkWithObstruction(grid, cellInCurrentDirection, amountOfLoops,boxAlreadyPlaced);
-	}
-
-	public static bool CanCreateInfiniteLoop(Grid<char> grid, Cell<char> currentPos, bool boxAlreadyPlaced) {
-
-
-		var nightyDegrees = Turn90Degrees(currentPos.Value);
-		var nightyDegreeDirection = CurrentDirection(nightyDegrees);
-
-		var cellAccourdingToDirection = grid.GetAllCellsInSpecificDirection(currentPos, nightyDegreeDirection);
-
-		var cellContainingPlusSign = cellAccourdingToDirection.Where(_ => _.Value == '+').ToList();
-
-		if (cellContainingPlusSign != null && cellContainingPlusSign.Count != 0)
-		{
-			return true;
-		}
-		if (boxAlreadyPlaced) {
-			return false;
-		}
-
-		//var containsOtherCrate = cellAccourdingToDirection
-		//	.Where(_ => _.Value == '#')
-		//	.OrderBy(_ => _.)
-		//	.ToList();
-		
-		//var (_,_,amount_loops) = WalkWithObstruction(grid, currentPos);
-
-
-		return false;
+		return IsInfinitePath(grid, cellInCurrentDirection, listMap);
 	}
 
 
