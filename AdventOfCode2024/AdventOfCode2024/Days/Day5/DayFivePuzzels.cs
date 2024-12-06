@@ -52,7 +52,7 @@ public class DayFivePuzzels
 		return middleNumbers;
 	}
 
-	public static (bool, List<PageOrderingRule>) IsValidManual(List<int> manual, List<PageOrderingRule> orderingRules)
+	public static (bool isvalid, List<PageOrderingRule> pageOrderingRules) IsValidManual(List<int> manual, List<PageOrderingRule> orderingRules)
 	{
 		var setupOrderingRules = orderingRules
 				.Where(_ => manual.Contains(_.RuleX) && manual.Contains(_.RuleY))
@@ -75,19 +75,19 @@ public class DayFivePuzzels
 	public static int PartTwo(List<PageOrderingRule> orderingRules, List<List<int>> manuals)
 	{
 		var incorrectManuals = manuals
-			.Select(_ => (_, IsValidManual(_, orderingRules)))
-			.Where(_ => _.Item2.Item1 == false)
-			.Select(_ => (_.Item1, _.Item2.Item2));
+			.Select(_ => (manual: _, validManualTupple: IsValidManual(_, orderingRules)))
+			.Where(_ => _.validManualTupple.isvalid == false)
+			.Select(_ => (_.manual, _.validManualTupple.pageOrderingRules));
 
 		var result = incorrectManuals
-		   .Select(_ => SolveManual(_.Item1, _.Item2).Item1)
+		   .Select(_ => SolveManual(_.manual, _.pageOrderingRules).Manual)
 		   .Select(_ => _[_.Count / 2])
 		   .Sum();
 
 		return result;
 	}
 
-	private static (List<int>, List<PageOrderingRule>) SolveManual(List<int> manual, List<PageOrderingRule> pageOrderingRules)
+	private static (List<int> Manual, List<PageOrderingRule> pageOrderingRules) SolveManual(List<int> manual, List<PageOrderingRule> pageOrderingRules)
 	{
 		var faultyRule = pageOrderingRules.Where(_ => !_.IsValidRule()).First();
 

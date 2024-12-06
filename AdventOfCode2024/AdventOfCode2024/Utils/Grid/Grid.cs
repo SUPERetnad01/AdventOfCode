@@ -6,18 +6,18 @@ public class Grid<T>
 
 	public Grid(List<List<T>> grid)
 	{
-		for (int x = 0; x < grid.Count; x++)
+		for (int y = 0; y < grid.Count; y++)
 		{
-			for (var y = 0; y < grid.First().Count; y++)
+			for (var x = 0; x < grid.First().Count; x++)
 			{
 				var cell = new Cell<T>()
 				{
 					Coordinate = new Coordinate
 					{
-						X = x,
-						Y = y
+						Y = y,
+						X = x
 					},
-					Value = grid[x][y]
+					Value = grid[y][x]
 				};
 				Cells.Add(cell);
 			}
