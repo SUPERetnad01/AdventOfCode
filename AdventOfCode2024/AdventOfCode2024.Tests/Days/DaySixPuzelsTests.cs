@@ -32,7 +32,8 @@ public class DaySixPuzelsTests
 	[Fact]
 	public void PartTwo()
 	{
-		var input = @"
+
+		var normalInput = @"
 ....#.....
 .........#
 ..........
@@ -44,7 +45,7 @@ public class DaySixPuzelsTests
 #.........
 ......#...";
 
-		var labBluePrint = input
+		var labBluePrint = normalInput
 			.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
 			.Select(_ => _.ToList()).ToList();
 
@@ -52,6 +53,32 @@ public class DaySixPuzelsTests
 		var question2 = DaySixPuzzels.PartTwo(labBluePrint);
 
 		Assert.Equal(6, question2);
+
+	}
+
+	[Fact]
+	public void PartTwoCustomInput() {
+
+		var input = @"
+....#....................
+.........#...............
+.................#.......
+..#...................#..
+.......#.................
+.........................
+.#..^...........#........
+........#............#...
+#........................
+......#..................";
+
+		var labBluePrint = input
+			.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+			.Select(_ => _.ToList()).ToList();
+
+
+		var question2 = DaySixPuzzels.PartTwo(labBluePrint);
+
+		Assert.Equal(7, question2);
 
 	}
 }

@@ -11,10 +11,26 @@ public static class DaySixPuzzels
 	{
 		var grid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToInput(6));
 
-		var awnserOne = PartOne(grid);
-		Console.WriteLine($"Day 6 part one: {awnserOne}");
+		//var awnserOne = PartOne(grid);
+		//Console.WriteLine($"Day 6 part one: {awnserOne}");
 
-		var awnserTwo = PartTwo(grid);
+		var normalInput = @"
+....#.....
+.........#
+..........
+..#.......
+.......#..
+..........
+.#..^.....
+........#.
+#.........
+......#...";
+
+		var labBluePrint = normalInput
+			.Split(new string[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries)
+			.Select(_ => _.ToList()).ToList();
+
+		var awnserTwo = PartTwo(labBluePrint);
 		Console.WriteLine($"Day 6 part two: {awnserTwo}");
 	}
 
@@ -66,23 +82,17 @@ public static class DaySixPuzzels
 		return amountOfloops;
 	}
 
-	public static (Grid<char> grid, Cell<char> currentPos, int amountOfloops) WalkWithObstruction(Grid<char> grid, Cell<char> currentPos, int amountOfLoops = 0)
+	public static (Grid<char> grid, Cell<char> currentPos, int amountOfloops) WalkWithObstruction(Grid<char> grid, Cell<char> currentPos, int amountOfLoops = 0,bool boxAlreadyPlaced = false)
 	{
-		//Console.WriteLine("=============================================");
-		//grid.PrintGrid();
-		//Console.WriteLine("=============================================");
-
 		var currentDirection = CurrentDirection(currentPos.Value);
 
 		var cellInCurrentDirection = grid.GetCellBasedOnDirection(currentPos, currentDirection);
 
-	
 		if (cellInCurrentDirection == null)
 		{
 			currentPos.Value = 'X';
 			return (grid, currentPos, amountOfLoops);
 		}
-
 
 		if (cellInCurrentDirection.Value == '#')
 		{
@@ -91,36 +101,44 @@ public static class DaySixPuzzels
 			var newCell = grid.GetCellBasedOnDirection(currentPos, newDirection);
 			currentPos.Value = '+';
 			newCell.Value = rotatedPos;
-			//currentPos.Value = Turn90Degrees(currentPos.Value);
-			return WalkWithObstruction(grid, newCell, amountOfLoops);
+			return WalkWithObstruction(grid, newCell, amountOfLoops, boxAlreadyPlaced);
 		}
 
-		if (CanCreateInfiniteLoop(grid, currentPos))
+		if (CanCreateInfiniteLoop(grid, currentPos,boxAlreadyPlaced))
 		{
 			amountOfLoops++;
 		}
 
 		cellInCurrentDirection.Value = currentPos.Value;
 		currentPos.Value = 'X';
-		return WalkWithObstruction(grid, cellInCurrentDirection, amountOfLoops);
+		return WalkWithObstruction(grid, cellInCurrentDirection, amountOfLoops,boxAlreadyPlaced);
 	}
 
-	public static bool CanCreateInfiniteLoop(Grid<char> grid, Cell<char> currentPos) {
+	public static bool CanCreateInfiniteLoop(Grid<char> grid, Cell<char> currentPos, bool boxAlreadyPlaced) {
 
 
 		var nightyDegrees = Turn90Degrees(currentPos.Value);
 		var nightyDegreeDirection = CurrentDirection(nightyDegrees);
 
-		var cellAccourdingToDirection = grid.GetAllCellsInSpecificDirection(currentPos,nightyDegreeDirection);
+		var cellAccourdingToDirection = grid.GetAllCellsInSpecificDirection(currentPos, nightyDegreeDirection);
 
 		var cellContainingPlusSign = cellAccourdingToDirection.Where(_ => _.Value == '+').ToList();
 
-
-
-		if(cellContainingPlusSign != null && cellContainingPlusSign.Count != 0 ) 
+		if (cellContainingPlusSign != null && cellContainingPlusSign.Count != 0)
 		{
 			return true;
 		}
+		if (boxAlreadyPlaced) {
+			return false;
+		}
+
+		//var containsOtherCrate = cellAccourdingToDirection
+		//	.Where(_ => _.Value == '#')
+		//	.OrderBy(_ => _.)
+		//	.ToList();
+		
+		//var (_,_,amount_loops) = WalkWithObstruction(grid, currentPos);
+
 
 		return false;
 	}
