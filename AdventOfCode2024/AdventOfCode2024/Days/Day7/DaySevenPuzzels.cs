@@ -49,15 +49,18 @@ public static class DaySevenPuzzels
 	public static long PartTwo(List<(long testResults, List<long> numbersToTest)> input)
 	{
 		long total = 0;
-
+		var amountOfResults = 0;
 		foreach (var (testResult, testNumbers) in input)
 		{
 			var result = Solve2(testResult, testNumbers);
 			if (result == testResult)
 			{
+				amountOfResults++;
 				total += testResult;
 			}
 		}
+
+		Console.WriteLine($"amountOfResults: {amountOfResults}");
 
 		return total;
 	}
@@ -117,17 +120,17 @@ public static class DaySevenPuzzels
 		var multipleSolve = numbersToTest.First() * numbersToTest[1];
 		var concatSolve = long.Parse(numbersToTest.First().ToString() + numbersToTest[1].ToString());
 
-		if (concatSolve == TestResult)
+		if (concatSolve == TestResult && numbersToTest.Count == 2)
 		{
 			return concatSolve;
 		}
 
-		if (additionSolve == TestResult)
+		if (additionSolve == TestResult && numbersToTest.Count == 2)
 		{
 			return additionSolve;
 		}
 
-		if (multipleSolve == TestResult)
+		if (multipleSolve == TestResult && numbersToTest.Count == 2)
 		{
 			return multipleSolve;
 		}
@@ -164,7 +167,7 @@ public static class DaySevenPuzzels
 		}
 
 
-		return -100000000;
+		return 0;
 
 	}
 

@@ -31,7 +31,8 @@ public class DaySevenPuzzelsTests
 	{
 		var testResult = new List<(long, List<long>)>() {
 
-			{ (190, new List<long>() { 10, 19 }) },
+			{ (111, new List<long>() { 11,1,2 }) },
+			{ (190, new List<long>() { 10, 19}) },
 			{(3267, new List<long>() { 81,40,27})},
 			{ (83,new List<long>() { 17,5})},
 
