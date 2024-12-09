@@ -12,4 +12,13 @@ public class DayNinePuzzelsTests
 
 		Assert.Equal(1928, awnserPartOne);
 	}
+
+	[Fact]
+	public void PartTwo()
+	{
+		var input = "2333133121414131402";
+		var awnserPartTwo = DayNinePuzzels.PartTwo(input);
+
+		Assert.Equal(2858, awnserPartTwo);
+	}
 }
