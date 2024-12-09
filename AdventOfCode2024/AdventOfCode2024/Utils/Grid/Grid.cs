@@ -71,6 +71,28 @@ public class Grid<T>
 		return cells.ToList();
 	}
 
+	public List<Cell<T>> GetAllCellsInSpecificDirectionBasedOnSubSet(Cell<T> cell, DIRECTION direction, List<Cell<T>> subSet)
+	{
+		var cells = direction switch
+		{
+			DIRECTION.NORTH => subSet.Where(_ => _.Coordinate.X == cell.Coordinate.X && _.Coordinate.Y < cell.Coordinate.Y),
+			DIRECTION.SOUTH => subSet.Where(_ => _.Coordinate.X == cell.Coordinate.X && _.Coordinate.Y > cell.Coordinate.Y),
+			DIRECTION.EAST => subSet.Where(_ => _.Coordinate.X > cell.Coordinate.X && _.Coordinate.Y == cell.Coordinate.Y),
+			DIRECTION.WEST => subSet.Where(_ => _.Coordinate.X < cell.Coordinate.X && _.Coordinate.Y == cell.Coordinate.Y),
+
+			DIRECTION.NORTHWEST => subSet.Where(_ => 
+				_.Coordinate.X < cell.Coordinate.X &&
+				_.Coordinate.Y > cell.Coordinate.Y &&
+				_.Coordinate.Y - cell.Coordinate.Y == _.Coordinate.X - cell.Coordinate.X),
+			DIRECTION.NORTHEAST => null,
+			DIRECTION.SOUTHEAST => null,
+			DIRECTION.SOUTHWEST => null,
+			_ => throw new NotImplementedException(),
+		};
+
+		return cells.ToList();
+	}
+
 	public void PrintGrid() 
 	{
 		int maxX = Cells.Max(c => c.Coordinate.X);
@@ -126,4 +148,6 @@ public static class DirectionHelper {
 
 		}
 	}
+
+
 }

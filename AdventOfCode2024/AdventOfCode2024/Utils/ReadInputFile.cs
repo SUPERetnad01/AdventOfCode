@@ -25,4 +25,12 @@ public class ReadInputFile
 		var grid = input.Select(_ => _.ToList()).ToList();
 		return grid;
 	}
+
+	public static string GetPathToTestInput(int dayNumber)
+	{
+		var rootPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
+		var pathToQuestion = Path.Combine(rootPath, "TestInput", $"input{dayNumber}.txt");
+		return pathToQuestion;
+	}
+
 }
