@@ -6,6 +6,7 @@ using AdventOfCode2024.Days.Day4;
 using AdventOfCode2024.Days.Day5;
 using AdventOfCode2024.Days.Day6;
 using AdventOfCode2024.Days.Day7;
+using AdventOfCode2024.Days.Day9;
 
 DayOnePuzzels.HandleQuestions();
 DayTwoPuzzels.HandleQuestions();
@@ -17,5 +18,7 @@ DayFivePuzzels.HandleQuestions();
 //Thread thread = new Thread(new ThreadStart(DaySixPuzzels.HandleQuestions), stackSize);
 //thread.Start();
 
-DaySevenPuzzels.HandlePuzzels();
+//DaySevenPuzzels.HandlePuzzels();
+
+DayNinePuzzels.HandlePuzzels();
 Console.ReadLine();
