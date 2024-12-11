@@ -67,6 +67,7 @@ public static class DayNinePuzzels
 		var currentId = 0;
 		var numbersList = input.Select(_ => int.Parse(_.ToString())).ToList();
 
+		// create the input
 		for (int numberIndex = 0; numberIndex < numbersList.Count(); numberIndex++)
 		{
 			var numberToCheck = numbersList[numberIndex];
@@ -94,6 +95,7 @@ public static class DayNinePuzzels
 
 		var passedFileIds = new List<int>();
 
+		// format the disk
 		for (int i = 0; i < operatingSystem.Count; i++)
 		{
 			var lastIndex = operatingSystem.Count - 1 - i;
@@ -101,6 +103,11 @@ public static class DayNinePuzzels
 
 			var currentFile = lastChunk.file;
 			var currentFileId = lastChunk.fileId;
+
+			if (currentFileId == 0 || currentFile.Count == 0)
+			{
+				break;
+			}
 
 			if (currentFile.Contains(".") || passedFileIds.Contains(currentFileId))
 			{
@@ -114,15 +121,62 @@ public static class DayNinePuzzels
 				continue;
 			}
 
-			var resultingFreeSpace = firstFreeSpace.file.GetRange(0, firstFreeSpace.file.Count - currentFile.Count);
+			var firstFreeSpaceIndex = operatingSystem.IndexOf(firstFreeSpace);
 
+            if (firstFreeSpaceIndex > lastIndex)
+            {
+				continue;
+            }
 
+            var resultingFreeSpace = firstFreeSpace.file.GetRange(0, firstFreeSpace.file.Count - currentFile.Count);
+
+			var nextSpace = operatingSystem[firstFreeSpaceIndex + 1];
+
+			if (nextSpace.file.Contains("."))
+			{
+
+				nextSpace.file.Concat(resultingFreeSpace);
+
+			}
+			else if (resultingFreeSpace.Count != 0)
+			{
+				operatingSystem.RemoveAt(firstFreeSpaceIndex);
+				operatingSystem.Insert(firstFreeSpaceIndex, (-1, resultingFreeSpace));
+				operatingSystem.Insert(firstFreeSpaceIndex, lastChunk);
+			}
+			else if (resultingFreeSpace.Count == 0)
+			{
+				operatingSystem.RemoveAt(firstFreeSpaceIndex);
+				operatingSystem.Insert(firstFreeSpaceIndex, lastChunk);
+			}
+
+			// use old index because index is changing
+			var oldLastIndex = operatingSystem.Count - 1 - i;
+
+			// replace old place with dots 
+			operatingSystem.RemoveAt(oldLastIndex);
+			operatingSystem.Insert(oldLastIndex, (-1, Enumerable.Repeat(".", currentFile.Count).ToList()));
 		}
 
-		var x = 0;
+		var resultOperatingSystem = operatingSystem
+			.SelectMany(_ => _.file)
+			.Select(_ =>
+			{
+				if (_ == ".") {
+					return 0;
+				}
+				return int.Parse(_);
+			}).ToList();
+
+		long total = 0;
+
+        for (int i = 0; i < resultOperatingSystem.Count(); i++)
+        {
+			total += resultOperatingSystem[i] * i;
+        }
 
 
-		return 1;
+        return total;
 	}
 }
 
