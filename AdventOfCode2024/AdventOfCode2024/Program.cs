@@ -1,5 +1,6 @@
 ﻿// See https://aka.ms/new-console-template for more information
 using AdventOfCode2024.Days.Day1;
+using AdventOfCode2024.Days.Day11;
 using AdventOfCode2024.Days.Day2;
 using AdventOfCode2024.Days.Day3;
 using AdventOfCode2024.Days.Day4;
@@ -19,6 +20,7 @@ DayFivePuzzels.HandleQuestions();
 //thread.Start();
 
 //DaySevenPuzzels.HandlePuzzels();
+//DayNinePuzzels.HandlePuzzels();
 
-DayNinePuzzels.HandlePuzzels();
+DayElevenPuzzels.HanldePuzzle();
 Console.ReadLine();
