@@ -10,12 +10,12 @@ public class DayElevenPuzzles
 		var stopwatch = new Stopwatch();
 
 		stopwatch.Start();
-		var result = PartOne(input, 25);
+		var result = PartTwo(input, 25);
 		stopwatch.Stop();
-		//Console.WriteLine($"Day 11 part one: {result} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 11 part one: {result} time ms: {stopwatch.ElapsedMilliseconds}");
 
-		stopwatch.Start();
-		var partTwo = PartOne(input, 75);
+		stopwatch.Restart();
+		var partTwo = PartTwo(input, 75);
 		stopwatch.Stop();
 		Console.WriteLine($"Day 11 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
 	}
@@ -103,7 +103,7 @@ public class DayElevenPuzzles
 
 		if (pebble == 0)
 		{
-			var result = PebbleFight(pebble, blinkCount - 1);
+			var result = PebbleFight(1, blinkCount - 1);
 			Memoization.Add((blinkCount, pebble), result);
 			return result;
 		}
