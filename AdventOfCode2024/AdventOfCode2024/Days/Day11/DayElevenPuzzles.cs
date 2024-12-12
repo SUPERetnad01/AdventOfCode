@@ -88,11 +88,11 @@ public class DayElevenPuzzles
 	private Dictionary<(long blinkCount, long pebble), long> Memoization { get; set; } = [];
 
 
-	public long PebbleFight(long blinkCount, long pebble)
+	public long PebbleFight(long pebble, long blinkCount)
 	{
 		if (blinkCount == 0)
 		{
-			return pebble;
+			return 1;
 		}
 
 		if (Memoization.TryGetValue((blinkCount, pebble), out var val))
@@ -103,7 +103,7 @@ public class DayElevenPuzzles
 
 		if (pebble == 0)
 		{
-			var result = PebbleFight(blinkCount - 1, pebble);
+			var result = PebbleFight(pebble, blinkCount - 1);
 			Memoization.Add((blinkCount, pebble), result);
 			return result;
 		}
@@ -116,8 +116,8 @@ public class DayElevenPuzzles
 			var stone1 = (long)(pebble / splitThingy);
 			var stone2 = (long)(pebble % splitThingy);
 
-			var result1 = PebbleFight(blinkCount - 1, stone1);
-			var result2 = PebbleFight(blinkCount - 1, stone2);
+			var result1 = PebbleFight(stone1, blinkCount - 1);
+			var result2 = PebbleFight(stone2, blinkCount - 1);
 
 			var splitStoneResult = result1 + result2;
 			Memoization.Add((blinkCount, pebble), splitStoneResult);
@@ -125,7 +125,7 @@ public class DayElevenPuzzles
 		}
 
 
-		var resultMultiply = PebbleFight(blinkCount - 1, pebble * 2024);
+		var resultMultiply = PebbleFight(pebble * 2024, blinkCount - 1);
 		Memoization.Add((blinkCount, pebble), resultMultiply);
 		return resultMultiply;
 	}
