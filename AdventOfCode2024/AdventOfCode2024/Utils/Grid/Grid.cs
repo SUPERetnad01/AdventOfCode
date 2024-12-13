@@ -30,7 +30,8 @@ public class Grid<T>
 	}
 
 
-	public object Clone() {
+	public object Clone()
+	{
 		return this.MemberwiseClone();
 	}
 
@@ -79,21 +80,13 @@ public class Grid<T>
 			DIRECTION.SOUTH => subSet.Where(_ => _.Coordinate.X == cell.Coordinate.X && _.Coordinate.Y > cell.Coordinate.Y),
 			DIRECTION.EAST => subSet.Where(_ => _.Coordinate.X > cell.Coordinate.X && _.Coordinate.Y == cell.Coordinate.Y),
 			DIRECTION.WEST => subSet.Where(_ => _.Coordinate.X < cell.Coordinate.X && _.Coordinate.Y == cell.Coordinate.Y),
-
-			DIRECTION.NORTHWEST => subSet.Where(_ => 
-				_.Coordinate.X < cell.Coordinate.X &&
-				_.Coordinate.Y > cell.Coordinate.Y &&
-				_.Coordinate.Y - cell.Coordinate.Y == _.Coordinate.X - cell.Coordinate.X),
-			DIRECTION.NORTHEAST => null,
-			DIRECTION.SOUTHEAST => null,
-			DIRECTION.SOUTHWEST => null,
 			_ => throw new NotImplementedException(),
 		};
 
 		return cells.ToList();
 	}
 
-	public void PrintGrid() 
+	public void PrintGrid()
 	{
 		int maxX = Cells.Max(c => c.Coordinate.X);
 		int maxY = Cells.Max(c => c.Coordinate.Y);
@@ -127,9 +120,10 @@ public enum DIRECTION
 	SOUTHWEST,
 	SOUTHEAST
 }
-public static class DirectionHelper {
+public static class DirectionHelper
+{
 
-	public static bool IsOppisiteCorner(this DIRECTION direction,DIRECTION possibleNeighbour) 
+	public static bool IsOppisiteCorner(this DIRECTION direction, DIRECTION possibleNeighbour)
 	{
 		var isOtherCorner = direction switch
 		{
@@ -137,13 +131,16 @@ public static class DirectionHelper {
 			DIRECTION.NORTHEAST => possibleNeighbour == DIRECTION.SOUTHWEST,
 			DIRECTION.SOUTHEAST => possibleNeighbour == DIRECTION.NORTHWEST,
 			DIRECTION.SOUTHWEST => possibleNeighbour == DIRECTION.NORTHEAST,
-		
+
 			_ => throw new NotImplementedException(),
 		};
 		return isOtherCorner;
 	}
 
-	public static List<DIRECTION> Corners { get {
+	public static List<DIRECTION> Corners
+	{
+		get
+		{
 			return new List<DIRECTION>() { DIRECTION.NORTHEAST, DIRECTION.NORTHWEST, DIRECTION.SOUTHEAST, DIRECTION.SOUTHWEST };
 
 		}

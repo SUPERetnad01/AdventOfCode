@@ -7,7 +7,7 @@ namespace AdventOfCode2024.Tests.Days;
 public class DayEightPuzzelsTests
 {
 	[Fact]
-	public void PartOne() 
+	public void PartOne()
 	{
 		var rawGrid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToTestInput(8));
 		var attenaGrid = new Grid<char>(rawGrid);

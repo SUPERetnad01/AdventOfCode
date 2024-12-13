@@ -5,13 +5,15 @@ public class Cell<T>
 	public Coordinate Coordinate { get; set; }
 	public T Value { get; set; }
 
-	public int Distance(Coordinate otheCoordinate) 
-	{ 
-		var comparedX = Math.Abs(otheCoordinate.X - Coordinate.X);
-		var comparedY = Math.Abs(otheCoordinate.Y - Coordinate.Y);
+	public int Distance(Coordinate otherCoordinate)
+	{
+		var comparedX = Math.Abs(otherCoordinate.X - Coordinate.X);
+		var comparedY = Math.Abs(otherCoordinate.Y - Coordinate.Y);
 
 		return comparedX + comparedY;
 	}
+
+
 
 }
 
@@ -37,5 +39,55 @@ public class Coordinate
 		};
 
 		return cord;
+	}
+
+	public static Coordinate operator +(Coordinate p1, Coordinate p2)
+	{
+		return new Coordinate()
+		{
+
+			X = p1.X + p2.X,
+			Y = p1.Y + p2.Y
+		};
+	}
+
+	public static Coordinate operator -(Coordinate p1, Coordinate p2)
+	{
+		return new Coordinate()
+		{
+
+			X = p1.X - p2.X,
+			Y = p1.Y - p2.Y
+		};
+	}
+
+	public static bool operator ==(Coordinate p1, Coordinate p2)
+	{
+		var x = p1.X == p2.X;
+		var y = p1.Y == p2.Y;
+
+		return x && y;
+	}
+
+	public static bool operator !=(Coordinate p1, Coordinate p2)
+	{
+		var x = p1.X != p2.X;
+		var y = p1.Y != p2.Y;
+
+		return x || y;
+	}
+	public override bool Equals(object obj)
+	{
+		if (obj is Coordinate point)
+		{
+			return this == point;
+		}
+		return false;
+	}
+
+	// Override GetHashCode
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(X, Y);
 	}
 }
