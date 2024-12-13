@@ -30,12 +30,6 @@ public class Grid<T>
 	}
 
 
-	public object Clone()
-	{
-		return this.MemberwiseClone();
-	}
-
-
 	public Cell<T>? GetCellByCoordinate(Coordinate cords)
 	{
 		var cell = Cells.FirstOrDefault(_ => _.Coordinate.X == cords.X && _.Coordinate.Y == cords.Y);
@@ -85,6 +79,18 @@ public class Grid<T>
 
 		return cells.ToList();
 	}
+
+	public bool IsInGrid(Cell<T> cell)
+	{
+		return Cells.Any(_ => _.Coordinate == cell.Coordinate);
+	}
+
+	public bool IsInGrid(Coordinate coordinate)
+	{
+		return Cells.Any(_ => _.Coordinate == coordinate);
+	}
+
+
 
 	public void PrintGrid()
 	{

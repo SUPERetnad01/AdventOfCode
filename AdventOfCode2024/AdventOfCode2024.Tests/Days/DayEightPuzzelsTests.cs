@@ -10,10 +10,21 @@ public class DayEightPuzzelsTests
 	public void PartOne()
 	{
 		var rawGrid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToTestInput(8));
-		var attenaGrid = new Grid<char>(rawGrid);
+		var antennaGrid = new Grid<char>(rawGrid);
 
 
-		var awnserOne = DayEightPuzzels.PartOne(attenaGrid);
-		Assert.Equal(14, awnserOne);
+		var answerOne = DayEightPuzzels.PartOne(antennaGrid);
+		Assert.Equal(14, answerOne);
+	}
+
+	[Fact]
+	public void PartTwo()
+	{
+		var rawGrid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToTestInput(8));
+		var antennaGrid = new Grid<char>(rawGrid);
+
+
+		var answerTwo = DayEightPuzzels.PartTwo(antennaGrid);
+		Assert.Equal(34, answerTwo);
 	}
 }

@@ -9,10 +9,14 @@ public static class DayEightPuzzels
 	public static void HandlePuzzels()
 	{
 		var rawGrid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToInput(8));
+
 		var attenaGrid = new Grid<char>(rawGrid);
 
 		var partOne = PartOne(attenaGrid);
 		Console.WriteLine($"Day 8 part one {partOne}");
+
+		var partTwo = PartTwo(attenaGrid);
+		Console.WriteLine($"Day 8 part one {partTwo}");
 	}
 
 	public static int PartOne(Grid<char> grid)
@@ -48,14 +52,58 @@ public static class DayEightPuzzels
 		return totalA.Count();
 	}
 
-	public List<Coordinate> GetRessonantFrequencies(Coordinate startingPoint, Coordinate distance, Grid<char> grid)
+	public static int PartTwo(Grid<char> grid)
 	{
-		if (grid.Cells.Any(_ => _.Coordinate != startingPoint))
+
+		var differentAntennas = grid.Cells
+			.Where(_ => _.Value != '.')
+			.GroupBy(_ => _.Value);
+
+		var totalAntinodes = new List<IEnumerable<Coordinate>>();
+
+		foreach (var antennaGroup in differentAntennas)
 		{
-			return [];
+
+			foreach (var antenna in antennaGroup)
+			{
+				var antinodes = antennaGroup
+					.Where(_ => _ != antenna)
+					.SelectMany(_ =>
+					{
+						var antinodeDistance = _.Coordinate - antenna.Coordinate;
+						var antinodePosition = _.Coordinate + antinodeDistance;
+
+						var ResonantFrequencyNodes = GetResonantFrequencies(antinodePosition, antinodeDistance, grid, [antinodePosition, _.Coordinate]);
+
+						return ResonantFrequencyNodes;
+					});
+
+
+				totalAntinodes.Add(antinodes);
+			}
+
 		}
 
-		var antinodeDistance = startingPoint - distance;
+		return totalAntinodes
+			.SelectMany(_ => _)
+			.Where(grid.IsInGrid)
+			.Distinct()
+			.Count();
+	}
+
+	public static IEnumerable<Coordinate> GetResonantFrequencies(Coordinate startingPoint, Coordinate distance, Grid<char> grid, List<Coordinate> resultResonateFrequencies)
+	{
+		var newAntinode = startingPoint + distance;
+
+		if (!grid.IsInGrid(newAntinode))
+		{
+			return resultResonateFrequencies;
+		}
+		resultResonateFrequencies.Add(newAntinode);
+
+		var otherNodes = GetResonantFrequencies(newAntinode, distance, grid, resultResonateFrequencies);
+
+		return otherNodes.Concat(resultResonateFrequencies);
 
 	}
 }
