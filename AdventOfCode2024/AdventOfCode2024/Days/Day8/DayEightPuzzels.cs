@@ -55,18 +55,11 @@ public static class DayEightPuzzels
 	public static int PartTwo(Grid<char> grid)
 	{
 
-		var differentAntennas = grid.Cells
+		var antinodes = grid.Cells
 			.Where(_ => _.Value != '.')
-			.GroupBy(_ => _.Value);
-
-		var totalAntinodes = new List<IEnumerable<Coordinate>>();
-
-		foreach (var antennaGroup in differentAntennas)
-		{
-
-			foreach (var antenna in antennaGroup)
-			{
-				var antinodes = antennaGroup
+			.GroupBy(_ => _.Value)
+			.SelectMany(antennaGroup => antennaGroup
+				.SelectMany(antenna => antennaGroup
 					.Where(_ => _ != antenna)
 					.SelectMany(_ =>
 					{
@@ -76,19 +69,14 @@ public static class DayEightPuzzels
 						var ResonantFrequencyNodes = GetResonantFrequencies(antinodePosition, antinodeDistance, grid, [antinodePosition, _.Coordinate]);
 
 						return ResonantFrequencyNodes;
-					});
+					})
 
+		))
+		.Where(grid.IsInGrid)
+		.Distinct()
+		.Count();
 
-				totalAntinodes.Add(antinodes);
-			}
-
-		}
-
-		return totalAntinodes
-			.SelectMany(_ => _)
-			.Where(grid.IsInGrid)
-			.Distinct()
-			.Count();
+		return antinodes;
 	}
 
 	public static IEnumerable<Coordinate> GetResonantFrequencies(Coordinate startingPoint, Coordinate distance, Grid<char> grid, List<Coordinate> resultResonateFrequencies)
