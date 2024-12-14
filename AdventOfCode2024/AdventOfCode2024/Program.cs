@@ -5,6 +5,7 @@ using AdventOfCode2024.Days.Day11;
 using AdventOfCode2024.Days.Day2;
 using AdventOfCode2024.Days.Day3;
 using AdventOfCode2024.Days.Day5;
+using AdventOfCode2024.Days.Day8;
 
 DayOnePuzzels.HandleQuestions();
 DayTwoPuzzels.HandleQuestions();
