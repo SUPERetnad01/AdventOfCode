@@ -144,7 +144,16 @@ public static class DirectionHelper {
 	}
 
 	public static List<DIRECTION> Corners { get {
-			return new List<DIRECTION>() { DIRECTION.NORTHEAST, DIRECTION.NORTHWEST, DIRECTION.SOUTHEAST, DIRECTION.SOUTHWEST };
+			return [DIRECTION.NORTHEAST, DIRECTION.NORTHWEST, DIRECTION.SOUTHEAST, DIRECTION.SOUTHWEST];
+
+		}
+	}
+
+	public static List<DIRECTION> UpDownLeftRight
+	{
+		get
+		{
+			return [DIRECTION.NORTH, DIRECTION.EAST, DIRECTION.SOUTH, DIRECTION.WEST];
 
 		}
 	}

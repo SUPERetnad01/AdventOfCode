@@ -26,6 +26,17 @@ public class ReadInputFile
 		return grid;
 	}
 
+	public static List<List<int>> GetGridWithOutSplit(string path)
+	{
+		var input = File.ReadAllLines(path);
+		var grid = input.Select(_ =>
+			_.Select(_ => int.Parse(_.ToString()))
+			.ToList()
+		).ToList();
+		return grid;
+	}
+
+
 	public static string GetPathToTestInput(int dayNumber)
 	{
 		var rootPath = Directory.GetParent(Directory.GetCurrentDirectory()).Parent.Parent.FullName;
