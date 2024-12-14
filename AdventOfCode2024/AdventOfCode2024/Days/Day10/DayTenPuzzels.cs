@@ -1,6 +1,7 @@
 ﻿using AdventOfCode2024.Utils;
 using AdventOfCode2024.Utils.Grid;
 using System.Diagnostics;
+using System.IO;
 
 namespace AdventOfCode2024.Days.Day10;
 
@@ -32,9 +33,8 @@ public class DayTenPuzzels
 
 		foreach (var startingPoint in allStartingPrositions)
 		{
-			var p = ValidPaths(grid, startingPoint, null);
+			paths += ValidPaths(grid, startingPoint, null);
 			HitTops = [];
-			paths += p;
 		}
 
 		return paths;
@@ -84,9 +84,8 @@ public class DayTenPuzzels
 
 		foreach (var startingPoint in allStartingPrositions)
 		{
-			var p = TrailRating(grid, startingPoint, null);
+			paths += TrailRating(grid, startingPoint, null);
 			HitTops = [];
-			paths += p;
 		}
 
 		return paths;
