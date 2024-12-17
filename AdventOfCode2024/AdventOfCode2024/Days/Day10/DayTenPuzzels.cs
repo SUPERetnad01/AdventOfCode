@@ -22,7 +22,7 @@ public class DayTenPuzzels
 		stopwatch.Restart();
 		var partTwo = PartTwo(grid);
 		stopwatch.Stop();
-		Console.WriteLine($"Day 11 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 10 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
 	}
 
 	public int PartOne(Grid<int> grid)
