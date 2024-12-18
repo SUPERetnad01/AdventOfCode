@@ -68,54 +68,7 @@ public class DaySixteenPuzzels
 
 		}
 
-
-		//var unvisidedNodes = grid.Cells.Where(_ => _.Coordinate != startingPosition.Coordinate).ToList();
-
-		//var distanceTable = new Dictionary<Cell<char>, int>() {
-		//	{startingPosition,0 }
-		//};
-
-		//unvisidedNodes.ForEach(_ =>
-		//{
-		//	distanceTable[_] = int.MaxValue;
-
-		//});
-
-		//var NodesToVisit = new List<Cell<char>>();
-
-
-		//var currentNode = startingPosition;
-		//var currentDirection = DIRECTION.EAST;
-		//while (unvisidedNodes.Any())
-		//{
-		//	var neighboringCells = grid
-		//		.GetCellsForEachDirection(currentNode)
-		//		.OfType<(Cell<char>,DIRECTION)>()	
-		//		.Where(_ => 
-		//			DirectionHelper.UpDownLeftRight.Contains(_.Item2) &&
-		//			_.Item1.Value != '#' &&
-		//			!DirectionHelper.IsOppisite(currentDirection,_.Item2)
-		//	);
-
-		//	var distances = neighboringCells
-		//		.Where(_ => !DirectionHelper.IsOppisite(currentDirection, _.Item2))
-		//		.Select(_ => (score: CalculateScoreForPath(currentNode, currentDirection, _.Item1, _.Item2), cellAndDirection: _));
-
-		//	foreach(var distance in distances) {
-		//		distanceTable[distance.cellAndDirection.Item1] += distance.score;
-		//	}
-
-		//	var smallestDistance = distances.OrderBy(_ => _.score).FirstOrDefault();
-
-		//	unvisidedNodes.Remove(smallestDistance.cellAndDirection.Item1);
-
-		//	currentNode = smallestDistance.cellAndDirection.Item1;
-
-		//}
-
-
-
-		return 1;
+		return -1;
 	}
 
 	public int CalculateScoreForPath(Cell<char> currentCell,DIRECTION? currentDirection,Cell<char> cellToConsider, DIRECTION directionbasedOnCurrentPosition)

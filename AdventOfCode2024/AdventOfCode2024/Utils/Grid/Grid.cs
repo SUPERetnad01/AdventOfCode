@@ -92,6 +92,8 @@ public class Grid<T>
 
 
 
+
+
 	public void PrintGrid()
 	{
 		int maxX = Cells.Max(c => c.Coordinate.X);
