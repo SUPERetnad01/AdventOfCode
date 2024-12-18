@@ -61,8 +61,8 @@ public static class DayFourPuzzels
 			return false;
 		}
 
-		var checkM = DirectionHelper.IsOppisiteCorner(allMCorners.First().Item2, allMCorners[1].Item2);
-		var checkS = DirectionHelper.IsOppisiteCorner(allSCorners.First().Item2, allSCorners[1].Item2);
+		var checkM = DirectionHelper.IsOppisite(allMCorners.First().Item2, allMCorners[1].Item2);
+		var checkS = DirectionHelper.IsOppisite(allSCorners.First().Item2, allSCorners[1].Item2);
 
 		if (checkM || checkS)
 		{

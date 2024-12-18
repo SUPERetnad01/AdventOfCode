@@ -36,7 +36,7 @@ public class Grid<T>
 		return cell;
 	}
 
-	public List<(Cell<T>, DIRECTION)>? GetCellsForEachDirection(Cell<T> cell)
+	public List<(Cell<T> cell, DIRECTION direction)>? GetCellsForEachDirection(Cell<T> cell)
 	{
 		var x = (DIRECTION[])Enum.GetValues(typeof(DIRECTION));
 		var cells = x.Select(_ => (GetCellBasedOnDirection(cell, _), _))
@@ -129,7 +129,7 @@ public enum DIRECTION
 public static class DirectionHelper
 {
 
-	public static bool IsOppisiteCorner(this DIRECTION direction, DIRECTION possibleNeighbour)
+	public static bool IsOppisite(this DIRECTION direction, DIRECTION possibleNeighbour)
 	{
 		var isOtherCorner = direction switch
 		{
@@ -137,9 +137,12 @@ public static class DirectionHelper
 			DIRECTION.NORTHEAST => possibleNeighbour == DIRECTION.SOUTHWEST,
 			DIRECTION.SOUTHEAST => possibleNeighbour == DIRECTION.NORTHWEST,
 			DIRECTION.SOUTHWEST => possibleNeighbour == DIRECTION.NORTHEAST,
-
+			DIRECTION.NORTH => possibleNeighbour == DIRECTION.SOUTH,
+			DIRECTION.SOUTH => possibleNeighbour == DIRECTION.NORTH,
+			DIRECTION.WEST => possibleNeighbour == DIRECTION.EAST,
+			DIRECTION.EAST => possibleNeighbour == DIRECTION.WEST,
 			_ => throw new NotImplementedException(),
-		};
+		}; ;
 		return isOtherCorner;
 	}
 

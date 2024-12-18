@@ -3,6 +3,7 @@
 public class Cell<T>
 {
 	public Coordinate Coordinate { get; set; }
+
 	public T Value { get; set; }
 
 	public int Distance(Coordinate otherCoordinate)
