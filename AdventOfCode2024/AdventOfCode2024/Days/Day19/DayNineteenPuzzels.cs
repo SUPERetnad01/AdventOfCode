@@ -36,13 +36,12 @@ public class DayNineteenPuzzles
 		return validPatterns;
 	}
 
-	public int PartTwo(List<string> availableTowels, List<string> allPatterns)
+	public long PartTwo(List<string> availableTowels, List<string> allPatterns)
 	{
-		var amountOfPatterns = 0;
-		foreach (var pattern in allPatterns)
-		{
-			amountOfPatterns += AllPossiblePatterns(availableTowels, pattern);
-		}
+
+
+		var amountOfPatterns = allPatterns
+			.Sum(_ => AllPossiblePatterns(availableTowels, _));
 
 
 		return amountOfPatterns;
@@ -71,7 +70,6 @@ public class DayNineteenPuzzles
 			var canMakePattern = CanMakePattern(availableTowels, stripedTowel);
 			if (canMakePattern)
 			{
-
 				Memoization.TryAdd(stripedTowel, true);
 				return true;
 			}
@@ -81,38 +79,30 @@ public class DayNineteenPuzzles
 		return false;
 	}
 
-	private Dictionary<string, int> MemoizationTwo { get; set; } = [];
+	private Dictionary<string, long> MemoizationTwo { get; set; } = [];
 
-	public int AllPossiblePatterns(List<string> availableTowels, string pattern)
+	public long AllPossiblePatterns(List<string> availableTowels, string pattern)
 	{
+		long amountOfPatterns = 0;
 
 		if (pattern == string.Empty)
 		{
 			return 1;
 		}
 
-		var matchingTowels = availableTowels.Where(pattern.StartsWith);
-
-		if (MemoizationTwo.TryGetValue(pattern, out var value) && value < 0)
+		if (MemoizationTwo.TryGetValue(pattern, out var value))
 		{
 			return value;
 		}
 
-		var amountOfPatterns = 0;
+		var matchingTowels = availableTowels.Where(pattern.StartsWith);
 
 		foreach (var towel in matchingTowels)
 		{
 			var stripedTowel = pattern.Substring(towel.Length);
 			amountOfPatterns += AllPossiblePatterns(availableTowels, stripedTowel);
-
-			if (amountOfPatterns >= 1)
-			{
-				MemoizationTwo.TryAdd(stripedTowel, amountOfPatterns);
-			}
-
 		}
-		if (amountOfPatterns == 0)
-			MemoizationTwo.TryAdd(pattern, 0);
+		MemoizationTwo.TryAdd(pattern, amountOfPatterns);
 
 		return amountOfPatterns;
 	}
