@@ -14,14 +14,17 @@ public class DayEighteenPuzzles
 			return new Coordinate() { X = int.Parse(splitcord[0]), Y = int.Parse(splitcord[1]) };
 		}).ToList();
 
-		var resultPartOne = PartOne(coordinates, 70,1024);
+		var resultPartOne = PartOne(coordinates, 70, 1024);
 		Console.WriteLine($"Day 18 part One: {resultPartOne}");
+
+		var resultPartTwo = PartTwo(coordinates, 70);
+		Console.WriteLine($"Day 18 part Two: {resultPartTwo.X} {resultPartTwo.Y}");
 
 	}
 
-	public int PartOne(List<Coordinate> fallenbites,int size,int bytesToTake)
+	public int PartOne(List<Coordinate> fallenbites, int size, int bytesToTake)
 	{
-		var CordList = Enumerable.Repeat(Enumerable.Repeat('.', size + 1).ToList(),size + 1).ToList();
+		var CordList = Enumerable.Repeat(Enumerable.Repeat('.', size + 1).ToList(), size + 1).ToList();
 		var grid = new Grid<char>(CordList);
 		var amountOfBytesToTake = fallenbites.Take(bytesToTake);
 		var blockedCells = grid.Cells
@@ -30,74 +33,102 @@ public class DayEighteenPuzzles
 		foreach (var blockedCell in blockedCells)
 		{
 			blockedCell.Value = '#';
-			//grid.PrintGrid();
 		}
 
 		var start = grid.GetCellByCoordinate(new() { X = 0, Y = 0 });
-		var end = grid.GetCellByCoordinate(new() { X = size , Y = size });
+		var end = grid.GetCellByCoordinate(new() { X = size, Y = size });
 
-		start.Value = 'S';
-		end.Value = 'E';
-
-		grid.PrintGrid();
-
-		var shortestPath = FindShortestPath(grid, start,end );
+		var shortestPath = FindShortestPath(grid, start, end);
 
 		return shortestPath;
 	}
+
+	public Coordinate PartTwo(List<Coordinate> fallenBytes, int size)
+	{
+		var CordList = Enumerable.Repeat(Enumerable.Repeat('.', size + 1).ToList(), size + 1).ToList();
+		var grid = new Grid<char>(CordList);
+
+		var start = grid.GetCellByCoordinate(new() { X = 0, Y = 0 });
+		var end = grid.GetCellByCoordinate(new() { X = size, Y = size });
+
+
+		var blockedCells = grid.Cells
+			.Where(_ => fallenBytes.Contains(_.Coordinate));
+
+		foreach (var blockedCell in blockedCells)
+		{
+			blockedCell.Value = '#';
+		}
+
+		for (int i = 0; i < fallenBytes.Count; i++)
+		{
+			var currentCellToDrop = fallenBytes.Count - i - 1;
+			var blockingSellToRemove = fallenBytes[currentCellToDrop];
+			var blockedCell = grid.Cells.FirstOrDefault(_ => _.Coordinate == blockingSellToRemove);
+
+			blockedCell.Value = '.';
+
+
+			var shortestPath = FindShortestPath(grid, start, end);
+
+			if (shortestPath != -1)
+			{
+				return fallenBytes[currentCellToDrop];
+			}
+
+		}
+
+		return new Coordinate() { X = -1, Y = -1 };
+	}
+
 
 	public int FindShortestPath(Grid<char> grid, Cell<char> startingPosition, Cell<char>? target)
 	{
 		var priortyQueue = new PriorityQueue<Cell<char>, int>();
 		priortyQueue.Enqueue(startingPosition, 0);
 
-		var seen = new HashSet<Cell<char>>();
+		var distances = new Dictionary<Cell<char>, int>
+		{
+			[startingPosition] = 0
+		};
 
+		var seen = new HashSet<Cell<char>>();
 
 		while (priortyQueue.Count > 0)
 		{
-			var canDeque = priortyQueue.TryDequeue(out var cell, out int score);
+			priortyQueue.TryDequeue(out var cell, out int score);
 
-			if (cell.Coordinate == target.Coordinate)
+			if (cell == target)
 			{
 				return score;
 			}
 
-			seen.Add(cell);
-
-			var getValidNodes = grid.GetCellsForEachDirection(cell)
-				.Where(_ =>
-					cell != null &&
-					_.cell.Value != '#' &&
-					DirectionHelper.UpDownLeftRight.Contains(_.direction) &&
-					!seen.Contains(_.cell))
-				.ToList();
-
-
-			var distances = getValidNodes
-				.Select(_ => (score: score + 1, cellAndDirection: _))
-				.ToList();
-
-			foreach (var distance in distances)
+			if (seen.Contains(cell))
 			{
-				priortyQueue.Enqueue(distance.cellAndDirection.cell, distance.score);
+				continue;
 			}
 
+			seen.Add(cell);
+
+			foreach (var neighbor in grid.GetCellsForEachDirection(cell))
+			{
+				if (neighbor.cell == null || neighbor.cell.Value == '#' || !DirectionHelper.UpDownLeftRight.Contains(neighbor.direction))
+				{
+					continue;
+				}
+
+				var newScore = score + 1;
+
+				if (!distances.TryGetValue(neighbor.cell, out var currentDistance) || newScore < currentDistance)
+				{
+					distances[neighbor.cell] = newScore;
+					priortyQueue.Enqueue(neighbor.cell, newScore);
+				}
+			}
 		}
-
-
 
 		return -1;
 	}
 
-	public int CalculateScoreForPath(Cell<char> currentCell, DIRECTION? currentDirection, Cell<char> cellToConsider, DIRECTION directionbasedOnCurrentPosition)
-	{
-		if (currentDirection == directionbasedOnCurrentPosition || currentDirection == null)
-		{
-			return 1;
-		}
-
-		return 1;
-	}
 
 }
