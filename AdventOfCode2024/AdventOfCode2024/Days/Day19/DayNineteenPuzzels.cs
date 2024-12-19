@@ -95,13 +95,10 @@ public class DayNineteenPuzzles
 			return value;
 		}
 
-		var matchingTowels = availableTowels.Where(pattern.StartsWith);
+		amountOfPatterns = availableTowels
+			.Where(pattern.StartsWith)
+			.Sum(_ => AllPossiblePatterns(availableTowels, pattern.Substring(_.Length)));
 
-		foreach (var towel in matchingTowels)
-		{
-			var stripedTowel = pattern.Substring(towel.Length);
-			amountOfPatterns += AllPossiblePatterns(availableTowels, stripedTowel);
-		}
 		MemoizationTwo.TryAdd(pattern, amountOfPatterns);
 
 		return amountOfPatterns;

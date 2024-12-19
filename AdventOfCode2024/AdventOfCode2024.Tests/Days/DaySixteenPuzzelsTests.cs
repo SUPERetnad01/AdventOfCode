@@ -16,4 +16,15 @@ public class DaySixteenPuzzelsTests
 
 		Assert.Equal(7036, partOne);
 	}
+
+	[Fact]
+	public void PartTwo()
+	{
+		var rawGrid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToTestInput(16));
+		var grid = new Grid<char>(rawGrid);
+
+		var partTwo = new DaySixteenPuzzels().PartTwo(grid);
+
+		Assert.Equal(64, partTwo);
+	}
 }

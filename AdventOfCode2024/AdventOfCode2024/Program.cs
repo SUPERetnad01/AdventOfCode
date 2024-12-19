@@ -3,6 +3,7 @@ using AdventOfCode2024.Days.Day1;
 using AdventOfCode2024.Days.Day10;
 using AdventOfCode2024.Days.Day11;
 using AdventOfCode2024.Days.Day13;
+using AdventOfCode2024.Days.Day16;
 using AdventOfCode2024.Days.Day19;
 using AdventOfCode2024.Days.Day2;
 using AdventOfCode2024.Days.Day3;
