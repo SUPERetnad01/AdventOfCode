@@ -2,7 +2,7 @@
 
 public class Grid<T>
 {
-	public List<Cell<T>> Cells { get; set; } = [];
+	public HashSet<Cell<T>> Cells { get; set; } = [];
 
 	public Grid(List<List<T>> grid)
 	{
@@ -26,7 +26,7 @@ public class Grid<T>
 
 	public Grid(List<Cell<T>> cells)
 	{
-		Cells = cells;
+		Cells = new HashSet<Cell<T>>(cells);
 	}
 
 
@@ -90,10 +90,6 @@ public class Grid<T>
 		return Cells.Any(_ => _.Coordinate == coordinate);
 	}
 
-
-
-
-
 	public void PrintGrid()
 	{
 		int maxX = Cells.Max(c => c.Coordinate.X);
@@ -114,6 +110,13 @@ public class Grid<T>
 			}
 			Console.WriteLine();
 		}
+	}
+
+	public Cell<T> GetCellBasedOnDirection(Coordinate current, DIRECTION direction)
+	{
+		var coordinate = current.GetCellBasedOnDirection(direction);
+		var cellBasedOnDirection = Cells.FirstOrDefault(_ => _.Coordinate.X == coordinate.X && _.Coordinate.Y == coordinate.Y);
+		return cellBasedOnDirection;
 	}
 }
 

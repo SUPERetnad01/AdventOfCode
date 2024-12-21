@@ -23,6 +23,14 @@ public class Coordinate
 	public int Y { get; set; }
 	public int X { get; set; }
 
+	public int ManhatanDistance(Coordinate otherCoordinate)
+	{
+		var xDiff = Math.Abs(X - otherCoordinate.X);
+		var yDiff = Math.Abs(Y - otherCoordinate.Y);
+
+		return xDiff + yDiff;
+	}
+
 
 	public Coordinate GetCellBasedOnDirection(DIRECTION direction)
 	{
@@ -70,10 +78,10 @@ public class Coordinate
 		return x && y;
 	}
 
-	public static bool operator !=(Coordinate p1, Coordinate p2)
+	public static bool operator !=(Coordinate? p1, Coordinate? p2)
 	{
-		var x = p1.X != p2.X;
-		var y = p1.Y != p2.Y;
+		var x = p1?.X != p2?.X;
+		var y = p1?.Y != p2?.Y;
 
 		return x || y;
 	}
