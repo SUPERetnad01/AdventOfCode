@@ -1,8 +1,6 @@
 ﻿using AdventOfCode2024.Utils.Grid;
 using AdventOfCode2024.Utils;
 using System.Diagnostics;
-using System.Reflection.Emit;
-using System;
 
 namespace AdventOfCode2024.Days.Day21;
 
@@ -141,9 +139,9 @@ public class DayTwentyOnePuzzels
 	private Dictionary<(Coordinate start, Coordinate end), List<string>> AllControllerSequences { get; set;	 }
 
 	private Dictionary<(Coordinate start,Coordinate end,Grid<char> grid,int depth), long> Memoization { get; set; } = [];
-	private Dictionary<(string seqence ,Grid<char> grid,int depth), long> Memoization2 { get; set; } = [];
+	private Dictionary<(string seqence ,int depth), long> Memoization2 { get; set; } = [];
 
-	public long ComputeLenght2(string sequence, Grid<char> grid, int depth = 26)
+	public long ComputeLenght2(string sequence, Grid<char> grid, int depth = 25)
 	{
 		if (depth == 1)
 		{
@@ -158,7 +156,7 @@ public class DayTwentyOnePuzzels
 			return allLengths;
 		}
 
-		if (Memoization2.TryGetValue((sequence, grid, depth), out var val))
+		if (Memoization2.TryGetValue((sequence, depth), out var val))
 		{
 			return val;
 		}
@@ -171,6 +169,7 @@ public class DayTwentyOnePuzzels
 			var endpost = grid.Cells.FirstOrDefault(_ => _.Value == pairOfSequences.Second).Coordinate;
 			var minvalueOfSequence = AllControllerSequences[(startPos, endpost)]
 				.Select(_ => {
+					//Memoization2.TryAdd((pairOfSequences, depth), lenght);
 					var computedValue = ComputeLenght2(_, grid, depth - 1);
 					return computedValue;
 				}).Min();
@@ -178,7 +177,7 @@ public class DayTwentyOnePuzzels
 			lenght += minvalueOfSequence;
 		}
 
-		Memoization2.TryAdd((sequence, grid, depth), lenght);
+		Memoization2.TryAdd((sequence, depth), lenght);
 		return lenght;
 	}
 
