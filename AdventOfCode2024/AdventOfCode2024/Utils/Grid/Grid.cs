@@ -3,6 +3,8 @@
 public class Grid<T>
 {
 	public HashSet<Cell<T>> Cells { get; set; } = [];
+	public Cell<T> CurrentPossition { get; set; }
+
 
 	public Grid(List<List<T>> grid)
 	{
