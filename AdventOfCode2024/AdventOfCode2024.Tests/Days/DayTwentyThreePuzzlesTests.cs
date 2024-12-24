@@ -20,4 +20,20 @@ public class DayTwentyThreePuzzlesTests
 		Assert.Equal(126384, partOne);
 
 	}
+
+
+	[Fact]
+	public void PartTwo()
+	{
+		var input = File.ReadAllLines(ReadInputFile.GetPathToTestInput(23))
+			.Select(_ =>
+			{
+				var split = _.Split('-');
+				return new ConnectedPcs() { PC1 = split[0], PC2 = split[1] };
+			});
+
+		var partTwo = new DayTwentyTreePuzzles().PartTwo(input);
+		Assert.Equal("co,de,ka,ta", partTwo);
+
+	}
 }
