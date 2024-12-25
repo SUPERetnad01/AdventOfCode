@@ -26,7 +26,7 @@ public class DayTwentyTreePuzzles
 		var partTwo = PartTwo(input);
 		stopwatch.Stop();
 
-		Console.WriteLine($"Day 22 part one: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 22 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
 	}
 
 	public struct ConnectedPcs
@@ -59,19 +59,19 @@ public class DayTwentyTreePuzzles
 		var dictOfConnections = new Dictionary<string, IEnumerable<string>>();
 
 
-		foreach(var uniquePc in uniquePcs)
+		foreach (var uniquePc in uniquePcs)
 		{
 			var allconnectedPcs = input
 				.Where(_ => _.PC2 == uniquePc || _.PC1 == uniquePc)
 				.Select(_ => _.GetOtherPc(uniquePc))
 				.Distinct();
-			
-			dictOfConnections.Add(uniquePc,allconnectedPcs);
+
+			dictOfConnections.Add(uniquePc, allconnectedPcs);
 		}
 
 		var result = PairsOfThree(dictOfConnections);
 
-		var amountOfTs = result.Where(_ => _.Item1.StartsWith('t') || _.Item2.StartsWith('t') || _.Item3.StartsWith('t') );
+		var amountOfTs = result.Where(_ => _.Item1.StartsWith('t') || _.Item2.StartsWith('t') || _.Item3.StartsWith('t'));
 
 
 		return amountOfTs.Count();
@@ -88,78 +88,85 @@ public class DayTwentyTreePuzzles
 		.Distinct()
 		.ToHashSet();
 
-		var dictOfConnections = new Dictionary<string, IEnumerable<string>>();
+		var dictOfConnections = new Dictionary<string, HashSet<string>>();
 
 		foreach (var uniquePc in uniquePcs)
 		{
-			var allconnectedPcs = input
+			var allConnectedPcs = input
 				.Where(_ => _.PC2 == uniquePc || _.PC1 == uniquePc)
 				.Select(_ => _.GetOtherPc(uniquePc))
 				.Distinct();
 
-			dictOfConnections.Add(uniquePc, allconnectedPcs);
+			dictOfConnections.Add(uniquePc, allConnectedPcs.ToHashSet());
 		}
 
+		var orderedByAmountOfNodes = dictOfConnections
+			.OrderBy(_ => _.Value.Count())
+			.ToDictionary();
 
-		var result = FindAllCliques([], uniquePcs, [], dictOfConnections).Distinct();
-		var max = result.MaxBy(_ => _.Count);
+		var result = FindAllCliques([], uniquePcs, [], orderedByAmountOfNodes).Distinct();
+
+		var max = result.MaxBy(_ => _.Count).OrderBy(_ => _);
 		var resultString = string.Join(",", max);
 
 		return resultString;
 	}
 
-	private HashSet<HashSet<string>> FindAllCliques(HashSet<string> currentCollectionOfPcs, HashSet<string> potentialPcs, HashSet<string> pcVisted, Dictionary<string,IEnumerable<string>> graph)
+	private HashSet<HashSet<string>> FindAllCliques(HashSet<string> currentCollectionOfPcs, HashSet<string> potentialPcs, HashSet<string> pcVisited, Dictionary<string, HashSet<string>> graph)
 	{
 
-		HashSet<HashSet<string>> cliques = [];
+		var cliques = new HashSet<HashSet<string>>(HashSet<string>.CreateSetComparer());
 
-		if(potentialPcs.Count == 0 && pcVisted.Count == 0)
+		if (potentialPcs.Count == 0 && pcVisited.Count == 0)
 		{
-			var orderdResult = currentCollectionOfPcs.OrderBy(p => p);
-			cliques.Add(new HashSet<string>(orderdResult));
+
+			cliques.Add(new HashSet<string>(currentCollectionOfPcs));
 			return cliques;
+
 		}
 
-		string pivot = potentialPcs.Union(pcVisted).First();
+		string pivot = potentialPcs.Union(pcVisited)
+			.OrderByDescending(_ => graph[_].Count)
+			.First();
 
 		var nonNeighbors = new HashSet<string>(potentialPcs);
 		nonNeighbors.ExceptWith(graph[pivot]);
 
 
-		foreach(var pc in nonNeighbors)
+		foreach (var pc in nonNeighbors)
 		{
-			var connectedToPc = graph[pc];
+			currentCollectionOfPcs.Add(pc);
 
-			var newcollectionOfPCs = new HashSet<string>(currentCollectionOfPcs) { pc };
+			var connectedToPc = graph[pc];
 
 			var newPotentialPcs = new HashSet<string>(potentialPcs);
 			newPotentialPcs.IntersectWith(connectedToPc);
 
-			var newPcVisted = new HashSet<string>(pcVisted);
-			newPcVisted.IntersectWith(connectedToPc);
+			var newPcVisited = new HashSet<string>(pcVisited);
+			newPcVisited.IntersectWith(connectedToPc);
 
-			var result = FindAllCliques(newcollectionOfPCs, newPotentialPcs, newPcVisted, graph);
+			var result = FindAllCliques(currentCollectionOfPcs, newPotentialPcs, newPcVisited, graph);
 
 			cliques.UnionWith(result);
 
-			pcVisted.Add(pc);
+			currentCollectionOfPcs.Remove(pc);
+			potentialPcs.Remove(pc);
+			pcVisited.Add(pc);
 
 		}
 
 		return cliques;
 	}
 
-
-	private HashSet<(string, string, string)> PairsOfThree(Dictionary<string,IEnumerable<string>> dictOfConnections)
+	private HashSet<(string, string, string)> PairsOfThree(Dictionary<string, IEnumerable<string>> dictOfConnections)
 	{
-		var totalConnections = new HashSet<(string,string,string)>();
+		var totalConnections = new HashSet<(string, string, string)>();
 
-		foreach(var (pc,connections) in dictOfConnections)
+		foreach (var (pc, connections) in dictOfConnections)
 		{
 
-			foreach(var rr in connections)
+			foreach (var rr in connections)
 			{
-				//var otherConnections = dictOfConnections[rr];
 				foreach (var thridPc in dictOfConnections[rr])
 				{
 					var thirdConnections = dictOfConnections[thridPc];
@@ -178,7 +185,7 @@ public class DayTwentyTreePuzzles
 						{
 							totalConnections.Add(newTupple);
 						}
-			
+
 						continue;
 					}
 				}
@@ -186,5 +193,5 @@ public class DayTwentyTreePuzzles
 		}
 
 		return totalConnections;
-	}	
+	}
 }
