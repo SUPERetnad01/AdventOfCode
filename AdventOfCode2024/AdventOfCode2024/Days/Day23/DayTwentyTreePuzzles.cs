@@ -45,8 +45,6 @@ public class DayTwentyTreePuzzles
 		}
 	}
 
-
-
 	public int PartOne(IEnumerable<ConnectedPcs> input)
 	{
 		var uniquePcs = input
@@ -156,10 +154,8 @@ public class DayTwentyTreePuzzles
 
 		foreach(var (pc,connections) in dictOfConnections)
 		{
-
 			foreach(var rr in connections)
 			{
-				//var otherConnections = dictOfConnections[rr];
 				foreach (var thridPc in dictOfConnections[rr])
 				{
 					var thirdConnections = dictOfConnections[thridPc];
