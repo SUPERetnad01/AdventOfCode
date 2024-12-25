@@ -45,8 +45,6 @@ public class DayTwentyTreePuzzles
 		}
 	}
 
-
-
 	public int PartOne(IEnumerable<ConnectedPcs> input)
 	{
 		var uniquePcs = input
