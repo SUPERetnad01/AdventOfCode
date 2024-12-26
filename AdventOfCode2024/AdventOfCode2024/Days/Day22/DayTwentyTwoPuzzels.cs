@@ -1,6 +1,7 @@
 ﻿using AdventOfCode2024.Utils;
 using AdventOfCode2024.Utils.Grid;
 using System.Diagnostics;
+using System.Linq;
 using System.Reflection.Metadata.Ecma335;
 using System.Runtime.CompilerServices;
 
@@ -25,7 +26,7 @@ public class DayTwentyTwoPuzzels
 		var partTwo = PartTwo(input, 2000);
 		stopwatch.Stop();
 
-		Console.WriteLine($"Day 22 part one: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 22 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
 	}
 
 	public long PartOne(List<int> initialsSecrets, int secretCount)
@@ -46,20 +47,19 @@ public class DayTwentyTwoPuzzels
 		long bannaValue
 	);
 
-	public long PartTwo(List<int> initialsSecrets, int secretCount)
+	public int PartTwo(List<int> initialsSecrets, int secretCount)
 	{
-		var brokers = new List<List<(long,long)>>();
-
-		var r = new List<long>();
+		var brokers = new List<List<(int price,int diffrence)>>();
 
 		foreach (var initialSecret in initialsSecrets)
 		{
 			var callculatedSecret = CalculateBannaChanges(initialSecret, secretCount);
-			var last = callculatedSecret.Last();
+			
 			callculatedSecret.Insert(0, initialSecret);
+			
 			var getLastNums = callculatedSecret.Select(_ => _ % 10).ToList();
 
-			var allDiffrences = new List<(long, long)>();
+			var allDiffrences = new List<(int, int)>();
 
 			for (var latnum = 0; latnum < getLastNums.Count(); latnum++)
 			{
@@ -70,62 +70,206 @@ public class DayTwentyTwoPuzzels
 				}
 				var current = getLastNums[latnum];
 				var previous = getLastNums[latnum - 1];
-				allDiffrences.Add((current, (current - previous)));
+				allDiffrences.Add(((int)current, (int)(current - previous)));
 
 			}
-			brokers.Add(allDiffrences);
-		}
 
+			//// remove first because there is no price change
+			allDiffrences.RemoveAt(0);
+
+			brokers.Add(allDiffrences);
+			
+		}
 
 		var containsSequence = new List<IEnumerable<long>>();
 
 		var diffrentBuyingOptions = new List<List<BananaGroup>>();
 
 		var splitUpBrokers =  new List<List<List<long>>>();
-		var brokerCounter = 0;
-		foreach (var broker in brokers)
-		{
-			brokerCounter++;	
-			var brokerlist = new List<BananaGroup>();
-			containsSequence = [];
-			for (var i = 4; i < broker.Count; i++)
-			{
-				var window = 4;
-				var brokerSequesnce = broker
-					.GetRange(i - window, window);
-				var diffrences = brokerSequesnce.Select(_ => _.Item2);
-				var value = brokerSequesnce.Last().Item1;
 
-				if (containsSequence.FirstOrDefault(_ => _.SequenceEqual(diffrences)) != null) 
+		var maxBannans = MaxBannas2(brokers);
+		var x = 0;
+		//var maxBannanas = MaxBannas(brokers);
+
+
+		//foreach (var broker in brokers)
+		//{
+		//	var brokerlist = new List<BananaGroup>();
+		//	containsSequence = [];
+		//	for (var i = 4; i < broker.Count; i++)
+		//	{
+		//		var window = 4;
+		//		var brokerSequesnce = broker
+		//			.GetRange(i - window, window);
+		//		var diffrences = brokerSequesnce.Select(_ => _.Item2);
+		//		var value = brokerSequesnce.Last().Item1;
+
+		//		if (containsSequence.FirstOrDefault(_ => _.SequenceEqual(diffrences)) != null) 
+		//		{
+		//			continue;
+		//		}
+		//		containsSequence.Add(diffrences.ToList());
+		//		var llfsl = new BananaGroup(diffrences, value);
+		//		brokerlist.Add(llfsl);
+
+		//	}
+		//	diffrentBuyingOptions.Add(brokerlist);
+		//}
+
+		//var maxAmountOfbannas = diffrentBuyingOptions
+		//	.Select(_ => _)
+		//	.SelectMany(_ => _)
+		//	.GroupBy(
+		//		s => s.sequence,
+		//		new EnumerableComparer<long>()
+		//		).Select(_ =>
+		//	{
+		//		var kk = _.Sum(_ => _.bannaValue);
+		//		return new { totalBannas = kk, sequence = _.Key };
+		//	})
+		//	.MaxBy(_ => _.totalBannas);
+
+
+		return maxBannans;
+	}
+
+	public int MaxBannas2(List<List<(int price, int diffrence)>> brokers)
+	{
+		var buyersLedgers = new Dictionary<int, Dictionary<(int, int, int, int), int>>();
+
+		var brokerId = 0;
+
+
+		foreach (var broker in brokers) 
+		{
+			buyersLedgers.Add(brokerId, []);
+
+			for (var i = 0; i < broker.Count; i++)
+			{
+				if (i + 4 > broker.Count)
+				{
+					break;
+				}
+
+
+				var window = broker.GetRange(i, 4);
+				var windowDiffrences = window.Select(_ => _.diffrence).ToArray();
+				var key = (windowDiffrences[0], windowDiffrences[1], windowDiffrences[2], windowDiffrences[3]);
+				var dict = buyersLedgers[brokerId];
+				dict.TryAdd(key, window.Last().price);
+			}
+			brokerId++;
+		}
+
+
+		var MaxBannanas = 0;
+
+		var checkedKeys = new HashSet<(long, long, long, long)>();
+
+
+		foreach (var buyer in buyersLedgers)
+		{
+	
+			var values = buyer.Value.Keys;
+			
+
+			foreach(var sequenceToCheck in values) {
+				var totalBannas = buyer.Value[sequenceToCheck];
+
+				if (checkedKeys.Contains(sequenceToCheck))
 				{
 					continue;
 				}
-				containsSequence.Add(diffrences.ToList());
-				var llfsl = new BananaGroup(diffrences, value);
-				brokerlist.Add(llfsl);
 
-			}
-			diffrentBuyingOptions.Add(brokerlist);
+				checkedKeys.Add(sequenceToCheck);
+
+				foreach (var otherbuyer in buyersLedgers)
+				{
+
+					if (buyer.Key == otherbuyer.Key)
+					{
+						continue;
+					}
+
+					if (otherbuyer.Value.TryGetValue(sequenceToCheck, out var val))
+					{
+						totalBannas += val;
+					}
+				}
+				MaxBannanas = Math.Max(MaxBannanas, totalBannas);
+			}	
 		}
 
-		var maxAmountOfbannas = diffrentBuyingOptions
-			.Select(_ => _)
-			.SelectMany(_ => _)
-			.GroupBy(
-				s => s.sequence,
-				new EnumerableComparer<long>()
-				).Select(_ =>
-			{
-				var kk = _.Sum(_ => _.bannaValue);
-				return new { totalBannas = kk, sequence = _.Key };
-			})
-			.MaxBy(_ => _.totalBannas);
 
 
-		return maxAmountOfbannas.totalBannas;
+		return MaxBannanas;
 	}
 
-	// Custom EqualityComparer for IEnumerable<T>
+
+	public long MaxBannas(List<List<(long price, long diffrence)>> brokers)
+	{
+		var maxBannans = 0L;
+		var checkedWindows = new HashSet<IEnumerable<long>>();
+
+		var brokerCount = 0;
+
+		foreach (var broker in brokers)
+		{
+			Console.WriteLine($"BrokerCounter: {brokerCount}");
+			brokerCount++;
+
+			for (var i = 0; i < broker.Count; i++)
+			{
+				var possibleMaxBannans = 0L;
+				if (i + 4 > broker.Count)
+				{
+					break;
+				}
+				var window = broker.GetRange(i,4);
+				var windowDiffrences = window.Select(_ => _.diffrence);
+
+				
+				if(checkedWindows.FirstOrDefault(_ => _.SequenceEqual(windowDiffrences)) != null)
+				{
+					continue;
+				}
+
+				checkedWindows.Add(windowDiffrences);
+
+
+				possibleMaxBannans += window.Last().price;
+
+
+				foreach (var otherBroker in brokers)
+				{
+					if (otherBroker.SequenceEqual(broker))
+					{
+						continue;
+					}
+
+					for (var j = 0; j < otherBroker.Count; j++)
+					{
+						if (j + 4 > broker.Count)
+						{
+							break;
+						}
+						var otherWindow = otherBroker.GetRange(j, 4);
+						var otherwindowDiffrences = otherWindow.Select(_ => _.diffrence);
+
+						if (otherwindowDiffrences.SequenceEqual(windowDiffrences))
+						{
+							possibleMaxBannans += otherWindow.Last().price;
+							break;
+						}
+
+					}
+					maxBannans = Math.Max(maxBannans, possibleMaxBannans);
+				}
+			}
+		}
+		return maxBannans;
+	}
+
 
 	public static long GetNumberAfterSequence(List<long> sequence, List<(long, long)> largerList)
 	{
@@ -195,7 +339,6 @@ public class DayTwentyTwoPuzzels
 
 		return total;
 	}
-
 
 	private long FirstStep(long secret)
 	{

@@ -38,7 +38,7 @@ new DayNineteenPuzzles().HandlePuzzles();
 
 new DayTwentyOnePuzzels().HandlePuzzles();
 //new StolenCode().HandlePuzzele();
-//new DayTwentyTwoPuzzels().HandlePuzzles();
+new DayTwentyTwoPuzzels().HandlePuzzles();
 //new DayTwentyTreePuzzles().HandlePuzzles();
-new DayTwentyFourPuzzles().HandlePuzzles();
+//new DayTwentyFourPuzzles().HandlePuzzles();
 Console.ReadLine();
