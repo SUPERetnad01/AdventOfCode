@@ -87,50 +87,52 @@ public class DayTwentyTwoPuzzels
 
 		var splitUpBrokers =  new List<List<List<long>>>();
 
-		var maxBannans = MaxBannas2(brokers);
+		//var maxBannans = MaxBannas2(brokers);
+		var maxBannans = MaxBannas3(brokers);
 		var x = 0;
 		//var maxBannanas = MaxBannas(brokers);
 
-
-		//foreach (var broker in brokers)
-		//{
-		//	var brokerlist = new List<BananaGroup>();
-		//	containsSequence = [];
-		//	for (var i = 4; i < broker.Count; i++)
-		//	{
-		//		var window = 4;
-		//		var brokerSequesnce = broker
-		//			.GetRange(i - window, window);
-		//		var diffrences = brokerSequesnce.Select(_ => _.Item2);
-		//		var value = brokerSequesnce.Last().Item1;
-
-		//		if (containsSequence.FirstOrDefault(_ => _.SequenceEqual(diffrences)) != null) 
-		//		{
-		//			continue;
-		//		}
-		//		containsSequence.Add(diffrences.ToList());
-		//		var llfsl = new BananaGroup(diffrences, value);
-		//		brokerlist.Add(llfsl);
-
-		//	}
-		//	diffrentBuyingOptions.Add(brokerlist);
-		//}
-
-		//var maxAmountOfbannas = diffrentBuyingOptions
-		//	.Select(_ => _)
-		//	.SelectMany(_ => _)
-		//	.GroupBy(
-		//		s => s.sequence,
-		//		new EnumerableComparer<long>()
-		//		).Select(_ =>
-		//	{
-		//		var kk = _.Sum(_ => _.bannaValue);
-		//		return new { totalBannas = kk, sequence = _.Key };
-		//	})
-		//	.MaxBy(_ => _.totalBannas);
-
-
 		return maxBannans;
+	}
+
+	public int MaxBannas3(List<List<(int price, int diffrence)>> brokers)
+	{
+		var buyersLedgers = new Dictionary<int, Dictionary<(int, int, int, int), int>>();
+
+		var brokerId = 0;
+
+
+		foreach (var broker in brokers)
+		{
+			buyersLedgers.Add(brokerId, []);
+
+			for (var i = 0; i < broker.Count; i++)
+			{
+				if (i + 4 > broker.Count)
+				{
+					break;
+				}
+
+				var window = broker.GetRange(i, 4);
+				var windowDiffrences = window.Select(_ => _.diffrence).ToArray();
+				var key = (windowDiffrences[0], windowDiffrences[1], windowDiffrences[2], windowDiffrences[3]);
+				var dict = buyersLedgers[brokerId];
+				dict.TryAdd(key, window.Last().price);
+			}
+			brokerId++;
+		}
+
+		var buyersLedgerss = buyersLedgers
+			.SelectMany(_ => _.Value)
+			.GroupBy(_ => _.Key)
+			.Select(
+				_ => new {
+					_.Key,
+					Value = _.Sum(s => s.Value)
+				}
+			).MaxBy(_ => _.Value);
+
+		return buyersLedgerss.Value;
 	}
 
 	public int MaxBannas2(List<List<(int price, int diffrence)>> brokers)
@@ -150,7 +152,6 @@ public class DayTwentyTwoPuzzels
 				{
 					break;
 				}
-
 
 				var window = broker.GetRange(i, 4);
 				var windowDiffrences = window.Select(_ => _.diffrence).ToArray();
