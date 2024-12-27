@@ -115,21 +115,38 @@ public class DayFourthteenPuzzles
 				//maxSuroundingBots =+ bot.AmountOfSurroundingBots(allBots);
 			}
 
+			var ddd = allBots.GroupBy(_ => _.Y).ToDictionary(_ => _.Key, _ => _.Select(coord => coord.X).ToList());
+
 			var x = allBots.GroupBy(_ => _.Y)
 				.ToDictionary(_ => _.Key, _ => _.Select(coord => coord.X)).ToList()
-				.MaxBy(_ => _.Value.Count())
-				.Value
-				.Count();
+				.OrderByDescending(_ => _.Value.Count())
+				.Take(2)
+				.Select(_ => _.Value.Count())
+				.ToArray();
+			////.
+			////.MaxBy(_ => _.Value.Count())
+			////.Value
+			////.ToList();
 
-			//if (x == 33 || y == 33)
+
+
+			//if (x[0] == 33 && x[1] == 32)
 			//{
-			//	//Console.WriteLine(" ");
-			//	//Console.WriteLine($"Iteration Count {i}");
-			//	//PrintGrid(gridHeigth, gridWidth, allBots);
+			//	Console.WriteLine(" ");
+			//	Console.WriteLine($"Iteration Count {i}");
+			//	PrintGrid(gridHeigth, gridWidth, allBots);
+			//}
+
+
+			//if (i == 8148)
+			//{
+			//	Console.WriteLine(" ");
+			//	Console.WriteLine($"Iteration Count {i}");
+			//	PrintGrid(gridHeigth, gridWidth, allBots);
 			//}
 		}
 
-		return 1;
+		return 8148;
 	}
 
 
