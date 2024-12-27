@@ -9,9 +9,10 @@ public class DayTwentyTwoPuzzelsTests
 	public void PartOneTests()
 	{
 		var input = File.ReadAllLines(ReadInputFile.GetPathToTestInput(22))
-			.Select(_ => int.Parse(_.ToString()));
+			.Select(_ => int.Parse(_.ToString()))
+			.ToList();
 
-		var partOne = new DayTwentyTwoPuzzels().PartOne(input.ToList(),2000);
+		var partOne = new DayTwentyTwoPuzzels().PartOne(input,2000);
 		Assert.Equal(37327623, partOne);
 	}
 

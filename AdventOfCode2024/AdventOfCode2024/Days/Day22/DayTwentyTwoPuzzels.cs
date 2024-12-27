@@ -74,38 +74,26 @@ public class DayTwentyTwoPuzzels
 
 			}
 
-			//// remove first because there is no price change
 			allDiffrences.RemoveAt(0);
 
 			brokers.Add(allDiffrences);
 			
 		}
 
-		var containsSequence = new List<IEnumerable<long>>();
-
-		var diffrentBuyingOptions = new List<List<BananaGroup>>();
-
-		var splitUpBrokers =  new List<List<List<long>>>();
-
-		//var maxBannans = MaxBannas2(brokers);
-		var maxBannans = MaxBannas3(brokers);
-		var x = 0;
-		//var maxBannanas = MaxBannas(brokers);
+		var maxBannans = MaxBannas4(brokers);
 
 		return maxBannans;
 	}
 
-	public int MaxBannas3(List<List<(int price, int diffrence)>> brokers)
+	public int MaxBannas4(List<List<(int price, int diffrence)>> brokers)
 	{
-		var buyersLedgers = new Dictionary<int, Dictionary<(int, int, int, int), int>>();
+		var buyersLedgers = new Dictionary<(int, int, int, int), int>();
 
-		var brokerId = 0;
-
+		var maxBannanas = 0;
 
 		foreach (var broker in brokers)
 		{
-			buyersLedgers.Add(brokerId, []);
-
+			var seenSequence = new HashSet<(int, int, int, int)>();
 			for (var i = 0; i < broker.Count; i++)
 			{
 				if (i + 4 > broker.Count)
@@ -116,194 +104,26 @@ public class DayTwentyTwoPuzzels
 				var window = broker.GetRange(i, 4);
 				var windowDiffrences = window.Select(_ => _.diffrence).ToArray();
 				var key = (windowDiffrences[0], windowDiffrences[1], windowDiffrences[2], windowDiffrences[3]);
-				var dict = buyersLedgers[brokerId];
-				dict.TryAdd(key, window.Last().price);
-			}
-			brokerId++;
-		}
+				var price = window.Last().price;
 
-		var buyersLedgerss = buyersLedgers
-			.SelectMany(_ => _.Value)
-			.GroupBy(_ => _.Key)
-			.Select(
-				_ => new {
-					_.Key,
-					Value = _.Sum(s => s.Value)
-				}
-			).MaxBy(_ => _.Value);
-
-		return buyersLedgerss.Value;
-	}
-
-	public int MaxBannas2(List<List<(int price, int diffrence)>> brokers)
-	{
-		var buyersLedgers = new Dictionary<int, Dictionary<(int, int, int, int), int>>();
-
-		var brokerId = 0;
-
-
-		foreach (var broker in brokers) 
-		{
-			buyersLedgers.Add(brokerId, []);
-
-			for (var i = 0; i < broker.Count; i++)
-			{
-				if (i + 4 > broker.Count)
-				{
-					break;
-				}
-
-				var window = broker.GetRange(i, 4);
-				var windowDiffrences = window.Select(_ => _.diffrence).ToArray();
-				var key = (windowDiffrences[0], windowDiffrences[1], windowDiffrences[2], windowDiffrences[3]);
-				var dict = buyersLedgers[brokerId];
-				dict.TryAdd(key, window.Last().price);
-			}
-			brokerId++;
-		}
-
-
-		var MaxBannanas = 0;
-
-		var checkedKeys = new HashSet<(long, long, long, long)>();
-
-
-		foreach (var buyer in buyersLedgers)
-		{
-	
-			var values = buyer.Value.Keys;
-			
-
-			foreach(var sequenceToCheck in values) {
-				var totalBannas = buyer.Value[sequenceToCheck];
-
-				if (checkedKeys.Contains(sequenceToCheck))
+				if (seenSequence.Contains(key))
 				{
 					continue;
 				}
 
-				checkedKeys.Add(sequenceToCheck);
+				seenSequence.Add(key);
 
-				foreach (var otherbuyer in buyersLedgers)
+				if (!buyersLedgers.TryAdd(key, price))
 				{
-
-					if (buyer.Key == otherbuyer.Key)
-					{
-						continue;
-					}
-
-					if (otherbuyer.Value.TryGetValue(sequenceToCheck, out var val))
-					{
-						totalBannas += val;
-					}
-				}
-				MaxBannanas = Math.Max(MaxBannanas, totalBannas);
-			}	
-		}
-
-
-
-		return MaxBannanas;
-	}
-
-
-	public long MaxBannas(List<List<(long price, long diffrence)>> brokers)
-	{
-		var maxBannans = 0L;
-		var checkedWindows = new HashSet<IEnumerable<long>>();
-
-		var brokerCount = 0;
-
-		foreach (var broker in brokers)
-		{
-			Console.WriteLine($"BrokerCounter: {brokerCount}");
-			brokerCount++;
-
-			for (var i = 0; i < broker.Count; i++)
-			{
-				var possibleMaxBannans = 0L;
-				if (i + 4 > broker.Count)
-				{
-					break;
-				}
-				var window = broker.GetRange(i,4);
-				var windowDiffrences = window.Select(_ => _.diffrence);
-
-				
-				if(checkedWindows.FirstOrDefault(_ => _.SequenceEqual(windowDiffrences)) != null)
-				{
-					continue;
-				}
-
-				checkedWindows.Add(windowDiffrences);
-
-
-				possibleMaxBannans += window.Last().price;
-
-
-				foreach (var otherBroker in brokers)
-				{
-					if (otherBroker.SequenceEqual(broker))
-					{
-						continue;
-					}
-
-					for (var j = 0; j < otherBroker.Count; j++)
-					{
-						if (j + 4 > broker.Count)
-						{
-							break;
-						}
-						var otherWindow = otherBroker.GetRange(j, 4);
-						var otherwindowDiffrences = otherWindow.Select(_ => _.diffrence);
-
-						if (otherwindowDiffrences.SequenceEqual(windowDiffrences))
-						{
-							possibleMaxBannans += otherWindow.Last().price;
-							break;
-						}
-
-					}
-					maxBannans = Math.Max(maxBannans, possibleMaxBannans);
-				}
-			}
-		}
-		return maxBannans;
-	}
-
-
-	public static long GetNumberAfterSequence(List<long> sequence, List<(long, long)> largerList)
-	{
-		if (sequence == null || largerList == null || sequence.Count == 0 || largerList.Count == 0)
-			throw new ArgumentException("Lists cannot be null or empty");
-
-		var allPossible = new List<long>();
-
-		// Iterate through the larger list to find the sequence
-		for (int i = 0; i <= largerList.Count - sequence.Count; i++)
-		{
-			// Check if the current subsequence matches
-			if (largerList.Skip(i).Take(sequence.Count).Select(_ => _.Item2).SequenceEqual(sequence))
-			{
-				// Check if there's an element after the subsequence
-				int nextIndex = i + sequence.Count - 1;
-				if (nextIndex < largerList.Count)
-				{
-					allPossible.Add(largerList[nextIndex].Item1);
-
-					//return largerList[nextIndex].Item1; // Return the number after the subsequence
+					var newPrice = buyersLedgers[key] + price;
+					buyersLedgers[key] = newPrice ;
+					maxBannanas = Math.Max(maxBannanas, newPrice);
 				}
 			}
 		}
 
-		if(allPossible.Count == 0)
-		{
-			return 0;
-		}
-
-		return allPossible.Max();
+		return maxBannanas;
 	}
-
 
 	public List<long> CalculateBannaChanges(long currentSecret, long secretCount)
 	{
