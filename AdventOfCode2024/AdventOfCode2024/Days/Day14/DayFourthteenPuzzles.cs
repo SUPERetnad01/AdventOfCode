@@ -3,6 +3,7 @@ using AdventOfCode2024.Utils;
 using AdventOfCode2024.Utils.Grid;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -21,8 +22,12 @@ public class DayFourthteenPuzzles
 		var result = PartOne(testinput, 103, 101);
 		Console.WriteLine($"Day 14 part one: {result}");
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var result2 = PartTwo(testinput, 103, 101);
-		Console.WriteLine($"Day 14 part two: {result2}");
+		stopwatch.Stop();
+		
+		Console.WriteLine($"Day 14 part two: {result2}, ms : {stopwatch.ElapsedMilliseconds}");
 	}
 
 	public class Bot
@@ -58,28 +63,6 @@ public class DayFourthteenPuzzles
 			Y = CalculateY(newY);
 
 		}
-
-		public int AmountOfSurroundingBots(List<Bot> bots)
-		{
-			var botXY = bots.Select(_ => (_.X , _.Y)).ToList();
-
-			var le = new List<(int, int)>() {
-			(Y - 1, X ),
-			(Y + 1, X ),
-			(Y, X + 1 ),
-			(Y, X - 1 ),
-			(Y - 1,X + 1 ),
-			(Y - 1, X - 1 ),
-			(Y + 1, X - 1 ),
-			(Y + 1, X + 1 ),
-
-			};
-
-			var suroundingBots = botXY.Where(_ => le.Contains(_)).Count();
-
-			return suroundingBots;
-
-		}
 	}
 
 
@@ -102,17 +85,12 @@ public class DayFourthteenPuzzles
 			allBots.Add(newBot);
 		}
 
-		var maxX = 0;
-		var maxY = 0;
 		for (int i = 0; i < amountOfSeconds; i++)
 		{
 
-
-			var maxSuroundingBots = 0;
 			foreach (var bot in allBots)
 			{
 				bot.Move(gridHeigth, gridWidth);
-				//maxSuroundingBots =+ bot.AmountOfSurroundingBots(allBots);
 			}
 
 			var ddd = allBots.GroupBy(_ => _.Y).ToDictionary(_ => _.Key, _ => _.Select(coord => coord.X).ToList());
@@ -120,30 +98,31 @@ public class DayFourthteenPuzzles
 			var x = allBots.GroupBy(_ => _.Y)
 				.ToDictionary(_ => _.Key, _ => _.Select(coord => coord.X)).ToList()
 				.OrderByDescending(_ => _.Value.Count())
-				.Take(2)
-				.Select(_ => _.Value.Count())
+				.Select(_ => _.Value)
+				.First()
+				.OrderByDescending(_ => _)
 				.ToArray();
-			////.
-			////.MaxBy(_ => _.Value.Count())
-			////.Value
-			////.ToList();
+
+			if (x.Count() == 33)
+			{
+				var isInSequences = true;
+				for (var j = 0; j < 13; j++)
+				{
+					if (x[j] - 1 != x[j + 1]) {
+						isInSequences = false;
+						break;
+					};
+
+				}
+
+				if (isInSequences) 
+				{
+					return i + 1;
+				}
+			}
 
 
-
-			//if (x[0] == 33 && x[1] == 32)
-			//{
-			//	Console.WriteLine(" ");
-			//	Console.WriteLine($"Iteration Count {i}");
-			//	PrintGrid(gridHeigth, gridWidth, allBots);
-			//}
-
-
-			//if (i == 8148)
-			//{
-			//	Console.WriteLine(" ");
-			//	Console.WriteLine($"Iteration Count {i}");
-			//	PrintGrid(gridHeigth, gridWidth, allBots);
-			//}
+			
 		}
 
 		return 8148;
