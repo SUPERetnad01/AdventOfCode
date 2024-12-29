@@ -15,14 +15,15 @@ using AdventOfCode2024.Days.Day21;
 using AdventOfCode2024.Days.Day22;
 using AdventOfCode2024.Days.Day23;
 using AdventOfCode2024.Days.Day24;
+using AdventOfCode2024.Days.Day25;
 using AdventOfCode2024.Days.Day3;
 using AdventOfCode2024.Days.Day5;
 
-DayOnePuzzels.HandleQuestions();
-DayTwoPuzzels.HandleQuestions();
-DayThreePuzzels.HandleQuestions();
+//DayOnePuzzels.HandleQuestions();
+//DayTwoPuzzels.HandleQuestions();
+//DayThreePuzzels.HandleQuestions();
 //DayFourPuzzels.HandleQuestions(); // takes about 10 seconds
-DayFivePuzzels.HandleQuestions();
+//DayFivePuzzels.HandleQuestions();
 
 //var stackSize = 10000000;
 //Thread thread = new Thread(new ThreadStart(DaySixPuzzels.HandleQuestions), stackSize);
@@ -31,24 +32,26 @@ DayFivePuzzels.HandleQuestions();
 //DaySevenPuzzels.HandlePuzzels();
 //DayNinePuzzels.HandlePuzzels();
 
-new DayTenPuzzels().HandlePuzzles();
-new DayElevenPuzzles().HandlePuzzles();
-DayThirtheenPuzzels.HandlePuzzels();
+//new DayTenPuzzels().HandlePuzzles();
+//new DayElevenPuzzles().HandlePuzzles();
+//DayThirtheenPuzzels.HandlePuzzels();
 
 //new DaySixteenPuzzels().HandlePuzzels();
 //new DayEighteenPuzzles().HandlePuzzels();
-new DayNineteenPuzzles().HandlePuzzles();
+//new DayNineteenPuzzles().HandlePuzzles();
 //DayTwentyPuzzels.HandlePuzzels();
 
-new DayTwentyOnePuzzels().HandlePuzzles();
+//new DayTwentyOnePuzzels().HandlePuzzles();
 //new StolenCode().HandlePuzzele();
 //new DayTwentyTwoPuzzels().HandlePuzzles();
 //new DayTwentyTreePuzzles().HandlePuzzles();
 //new DayTwentyFourPuzzles().HandlePuzzles();
 
 
-new DayFourthteenPuzzles().HandlePuzzles();
+//new DayFourthteenPuzzles().HandlePuzzles();
 //new DayTwelvePuzzles().HandlePuzzles();
 //new DayFiftheenPuzzels().HandlePuzzels();
-new DaySeventeenPuzzles().HandlePuzzles();
+//new DaySeventeenPuzzles().HandlePuzzles();
+
+new DayTwentyFivePuzzles().HandlePuzzels();
 Console.ReadLine();

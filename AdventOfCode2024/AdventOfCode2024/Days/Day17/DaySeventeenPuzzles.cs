@@ -11,6 +11,41 @@ public class DaySeventeenPuzzles
 		var input = File.ReadAllText(ReadInputFile.GetPathToInput(17));
 		var partOne = PartOne(input);
 		Console.WriteLine($"Day 17 part one: {partOne}");
+
+		var partTwo = PartTwo(input);
+		Console.WriteLine($"Day 17 part one: {partTwo}");
+	}
+
+
+
+	public long PartTwo(string input)
+	{
+		var regexPattern = @"Register A: (\d+)\s*Register B: (\d+)\s*Register C: (\d+)\s*Program: ([\d,]+)";
+
+
+		var regexOut = Regex.Match(input, regexPattern);
+
+		var registerA = int.Parse(regexOut.Groups[1].Value);
+		var registerB = int.Parse(regexOut.Groups[2].Value);
+		var registerC = int.Parse(regexOut.Groups[3].Value);
+
+		var program = regexOut.Groups[4].Value
+			.Split(',')
+			.Select(int.Parse)
+			.ToList();
+
+		var comp = new BitComputer()
+		{
+			RegisterA = registerA,
+			RegisterB = registerB,
+			RegisterC = registerC,
+			Program = program
+		};
+
+		//comp.RunProgram();
+
+		var result = comp.ReverseProgram(program, 0);
+		return result.Value;
 	}
 
 	public string PartOne(string input)
@@ -55,6 +90,44 @@ public class DaySeventeenPuzzles
 		public int InstructionPointer { get; set; } = 0;
 
 		public List<int> Output { get; set; } = [];
+
+
+		public long? ReverseProgram(List<int> program,long awnser = 0)
+		{
+			if(program.Count == 0)
+			{
+				return awnser;
+			}
+
+			
+            for (int i = 0; i < 9; i++)
+            {
+				long B = i;
+				var A = (awnser << 3) + B;
+		
+				B = A % 8;
+				B = B ^ 5;
+				var C = (long)Math.Floor(A / Math.Pow(2, B));
+				B = B ^ C;
+				B = B ^ 6;
+
+				if (B % 8 == program[program.Count - 1])
+				{
+
+					var truncedList = program.GetRange(0, program.Count - 1);
+					var subAwnser = ReverseProgram(truncedList, A);
+					if(subAwnser == null)
+					{
+						continue;
+					}
+
+					return subAwnser;
+				}
+			}
+
+			return null;
+        }
+
 
 		public void RunProgram()
 		{
@@ -118,7 +191,7 @@ public class DaySeventeenPuzzles
 		public void Adv(int operand)
 		{
 			var actualNumber = ComboOperator(operand);
-			RegisterA /= (int)Math.Pow(2, actualNumber);
+			RegisterA >>= actualNumber;
 		}
 
 		public void Bxl(int operand)
@@ -158,14 +231,14 @@ public class DaySeventeenPuzzles
 		{
 			var actualNumber = ComboOperator(operand);
 
-			RegisterB = (int)Math.Floor(RegisterA / Math.Pow(2, actualNumber));
+			RegisterB = RegisterA >> actualNumber;
 		}
 
 		public void Cdv(int operand)
 		{
 			var actualNumber = ComboOperator(operand);
 
-			RegisterC = (int)Math.Floor(RegisterA / Math.Pow(2, actualNumber));
+			RegisterC = RegisterA >> actualNumber;
 		}
 	}
 
