@@ -7,6 +7,7 @@ using AdventOfCode2024.Days.Day13;
 using AdventOfCode2024.Days.Day14;
 using AdventOfCode2024.Days.Day15;
 using AdventOfCode2024.Days.Day16;
+using AdventOfCode2024.Days.Day17;
 using AdventOfCode2024.Days.Day19;
 using AdventOfCode2024.Days.Day2;
 using AdventOfCode2024.Days.Day20;
@@ -48,5 +49,6 @@ new DayTwentyOnePuzzels().HandlePuzzles();
 
 new DayFourthteenPuzzles().HandlePuzzles();
 //new DayTwelvePuzzles().HandlePuzzles();
-new DayFiftheenPuzzels().HandlePuzzels();
+//new DayFiftheenPuzzels().HandlePuzzels();
+new DaySeventeenPuzzles().HandlePuzzles();
 Console.ReadLine();
