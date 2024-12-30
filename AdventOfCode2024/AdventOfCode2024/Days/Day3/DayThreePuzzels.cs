@@ -1,6 +1,7 @@
 ﻿using AdventOfCode2024.Utils;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -16,11 +17,17 @@ public static class DayThreePuzzels
 		var path = ReadInputFile.GetPathToInput(3);
 		var input = File.ReadAllText(path);
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var partOne = PartOne(input);
-		Console.WriteLine($"Day 3 PartOne: {partOne}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 3 part one: {partOne}, {stopwatch.ElapsedMilliseconds} ms");
 
+		stopwatch.Restart();
 		var partTwo = PartTwo(input);
-		Console.WriteLine($"Day 3 PartTwo: {partTwo}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 3 part two: {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
+
 	}
 
 	public static int PartOne(string corruptedInstruction)

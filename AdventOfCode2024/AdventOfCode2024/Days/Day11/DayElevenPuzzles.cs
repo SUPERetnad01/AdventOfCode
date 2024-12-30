@@ -12,12 +12,12 @@ public class DayElevenPuzzles
 		stopwatch.Start();
 		var result = PartTwo(input, 25);
 		stopwatch.Stop();
-		Console.WriteLine($"Day 11 part one: {result} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 11 part one: {result}, {stopwatch.ElapsedMilliseconds} ms");
 
 		stopwatch.Restart();
 		var partTwo = PartTwo(input, 75);
 		stopwatch.Stop();
-		Console.WriteLine($"Day 11 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 11 part two: {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public static int PartOne(List<long> input, int amountOfTimesToBlink)

@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2024.Utils;
+using System.Diagnostics;
 
 namespace AdventOfCode2024.Days.Day7;
 
@@ -22,11 +23,17 @@ public static class DaySevenPuzzels
 			return (testResults, testInput);
 		}).ToList();
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var awnser = PartOne(input);
-		Console.WriteLine($"awnser day 7 partOne: {awnser}");
+		stopwatch.Stop();
 
+		Console.WriteLine($"Day 7 part one: {awnser}, {stopwatch.ElapsedMilliseconds} ms");
+
+		stopwatch.Restart();
 		var awnser2 = PartTwo(input);
-		Console.WriteLine($"awnser day 7 partTwo: {awnser2}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 7 part two: {awnser2}, {stopwatch.ElapsedMilliseconds} ms");
 
 	}
 
@@ -62,22 +69,18 @@ public static class DaySevenPuzzels
 
 	public static long Solve(long TestResult, List<long> numbersToTest) 
 	{
-		if (numbersToTest.Count <= 1 ) { 
+		if (numbersToTest.Count == 1 ) { 
 			return 0;
 		}
 
 		var additionSolve = numbersToTest.First() + numbersToTest[1];
 		var multipleSolve = numbersToTest.First() * numbersToTest[1];
 
-		if (additionSolve == TestResult)
+		if (additionSolve == TestResult || multipleSolve == TestResult)
 		{
-			return additionSolve;
+			return TestResult;
 		}
-
-		if (multipleSolve == TestResult)
-		{
-			return multipleSolve;
-		}
+		
 
 		var additionElements = new List<long>(numbersToTest.GetRange(2, numbersToTest.Count - 2));
 		additionElements.Insert(0, additionSolve);
@@ -87,12 +90,12 @@ public static class DaySevenPuzzels
 
 		var addtionTotal = Solve(TestResult, additionElements);
 
-		var multipleTotal = Solve(TestResult, multipleElements);
-
 		if (addtionTotal == TestResult)
 		{
 			return addtionTotal;
 		}
+
+		var multipleTotal = Solve(TestResult, multipleElements);
 
 		if (multipleTotal == TestResult)
 		{
@@ -100,7 +103,7 @@ public static class DaySevenPuzzels
 		}
 
 
-		return -100000000;
+		return 0;
 
 	}
 
@@ -155,7 +158,6 @@ public static class DaySevenPuzzels
 		{
 			return concactTotal;
 		}
-
 
 		return 0;
 	}

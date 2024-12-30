@@ -1,5 +1,6 @@
 ﻿using AdventOfCode2024.Utils;
 using AdventOfCode2024.Utils.Grid;
+using System.Diagnostics;
 
 namespace AdventOfCode2024.Days.Day18;
 
@@ -14,11 +15,16 @@ public class DayEighteenPuzzles
 			return new Coordinate() { X = int.Parse(splitcord[0]), Y = int.Parse(splitcord[1]) };
 		}).ToList();
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var resultPartOne = PartOne(coordinates, 70, 1024);
-		Console.WriteLine($"Day 18 part One: {resultPartOne}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 18 part One: {resultPartOne}, {stopwatch.ElapsedMilliseconds} ms");
 
+		stopwatch.Restart();
 		var resultPartTwo = PartTwo(coordinates, 70);
-		Console.WriteLine($"Day 18 part Two: {resultPartTwo.X} {resultPartTwo.Y}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 18 part Two: {resultPartTwo.X},{resultPartTwo.Y}, {stopwatch.ElapsedMilliseconds} ms");
 
 	}
 

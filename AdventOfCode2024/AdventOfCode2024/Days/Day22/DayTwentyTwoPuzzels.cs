@@ -20,13 +20,13 @@ public class DayTwentyTwoPuzzels
 		var partOne = PartOne(input,2000);
 		stopwatch.Stop();
 
-		Console.WriteLine($"Day 22 part one: {partOne} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 22 part one: {partOne}, {stopwatch.ElapsedMilliseconds} ms");
 
 		stopwatch.Restart();
 		var partTwo = PartTwo(input, 2000);
 		stopwatch.Stop();
 
-		Console.WriteLine($"Day 22 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 22 part two: {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public long PartOne(List<int> initialsSecrets, int secretCount)

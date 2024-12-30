@@ -1,5 +1,6 @@
 ﻿using AdventOfCode2024.Utils;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2024.Days.Day25;
@@ -9,8 +10,12 @@ public class DayTwentyFivePuzzles
 	public void HandlePuzzels()
 	{
 		var input = File.ReadAllText(ReadInputFile.GetPathToInput(25));
+
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var resultOne = PartOne(input);
-		Console.WriteLine($"Day 25 part one {resultOne}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 25 part one : {resultOne}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 

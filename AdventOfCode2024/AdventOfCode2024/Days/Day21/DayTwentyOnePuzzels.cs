@@ -4,335 +4,96 @@ using System.Diagnostics;
 
 namespace AdventOfCode2024.Days.Day21;
 
+using Cache = System.Collections.Concurrent.ConcurrentDictionary<(char currentKey, char nextKey, int depth), long>;
+using Keypad = Dictionary<Vec2, char>;
+record struct Vec2(int x, int y);
+
 public class DayTwentyOnePuzzels
 {
-	public void HandlePuzzles()
+	public void HandlePuzzeles()
 	{
-		var codes = File.ReadLines(ReadInputFile.GetPathToInput(21)).ToList();
-
+		var res1 = File.ReadAllText(ReadInputFile.GetPathToInput(21));
 		var stopwatch = new Stopwatch();
 		stopwatch.Start();
-		//var result = PartOne(codes);
-		//stopwatch.Stop();
-		//Console.WriteLine($"Day 20 part one: {result} time ms: {stopwatch.ElapsedMilliseconds}");
+		var result = Solve(res1, 2);
+		Console.WriteLine($"Day 21 part one: {result}, {stopwatch.ElapsedMilliseconds} ms");
 
-		stopwatch.Restart();
-		var partTwo = PartTwo(codes);
-		stopwatch.Stop();
-		Console.WriteLine($"Day 21 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		var res2 = File.ReadAllText(ReadInputFile.GetPathToInput(21));
+		var result2 = Solve(res2, 25);
+		Console.WriteLine($"Day 21 part one: {result2}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
-	public int PartOne(List<string> codes)
+	long Solve(string input, int depth)
 	{
-		var numberDialGridCells = new List<Cell<char>>()
+		var numpad = ParseKeypad("789\n456\n123\n 0A");
+		var keypad2 = ParseKeypad(" ^A\n<v>");
+		var keypads = Enumerable.Repeat(keypad2, depth).Prepend(numpad).ToArray();
+
+		var cache = new Cache();
+		var res = 0L;
+
+		foreach (var line in input.Split("\r\n"))
 		{
-			new Cell<char>() { Coordinate = new Coordinate() { X = 0, Y = 0 }, Value = '7'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 0 }, Value = '8'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 0 }, Value = '9'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 0, Y = 1 }, Value = '4'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 1 }, Value = '5'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 1 }, Value = '6'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 0, Y = 2 }, Value = '1'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 2 }, Value = '2'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 2 }, Value = '3'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 3 }, Value = '0'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 3 }, Value = 'A'  },
-		};
+			var num = int.Parse(line[..^1]);
+			res += num * EncodeKeys(line, keypads, cache);
+		}
+		return res;
+	}
 
-		var controller = new List<Cell<char>>() {
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 0 }, Value = '^'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 0 }, Value = 'A'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 0, Y = 1 }, Value = '<'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 1 }, Value = 'v'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 1 }, Value = '>'  }
-		};
-		var controledRobotGrid = new Grid<char>(controller);
-		var numberDailGrid = new Grid<char>(numberDialGridCells);
-
-
-		var totalComplexitity = 0;
-		foreach (var code in codes)
+	long EncodeKeys(string keys, Keypad[] keypads, Cache cache)
+	{
+		if (keypads.Length == 0)
 		{
-			var keyDailSolve = SolveArm(code, numberDailGrid);
-			var next = keyDailSolve;
+			return keys.Length;
+		}
+		else
+		{
+			var currentKey = 'A';
+			var length = 0L;
 
-			foreach (var _ in Enumerable.Range(0, 2))
+			foreach (var nextKey in keys)
 			{
-				var possilbeSolves = new List<List<string>>();
-
-				foreach (var option in next)
-				{
-					var result = SolveArm(option, controledRobotGrid);
-					possilbeSolves.Add(result);
-				}
-
-				var r = possilbeSolves.SelectMany(_ => _).Min(_ => _.Count());
-				var allMinValues = possilbeSolves.SelectMany(_ => _).Where(_ => _.Count() == r).ToList();
-				next = allMinValues;
+				length += EncodeKey(currentKey, nextKey, keypads, cache);
+				currentKey = nextKey;
 			}
 
-			var length = next.First().Count();
-			var codeComplexitiy = int.Parse(code.Split('A').First());
-			totalComplexitity += length * codeComplexitiy;
-
+			return length;
 		}
-
-		return totalComplexitity;
 	}
+	long EncodeKey(char currentKey, char nextKey, Keypad[] keypads, Cache cache) =>
+	   cache.GetOrAdd((currentKey, nextKey, keypads.Length), _ => {
+		   var keypad = keypads[0];
 
-	public long PartTwo(List<string> codes)
+		   var currentPos = keypad.Single(kvp => kvp.Value == currentKey).Key;
+		   var nextPos = keypad.Single(kvp => kvp.Value == nextKey).Key;
+
+		   var dy = nextPos.y - currentPos.y;
+		   var vert = new string(dy < 0 ? 'v' : '^', Math.Abs(dy));
+
+		   var dx = nextPos.x - currentPos.x;
+		   var horiz = new string(dx < 0 ? '<' : '>', Math.Abs(dx));
+
+		   var cost = long.MaxValue;
+
+		   if (keypad[new Vec2(currentPos.x, nextPos.y)] != ' ')
+		   {
+			   cost = Math.Min(cost, EncodeKeys($"{vert}{horiz}A", keypads[1..], cache));
+		   }
+
+		   if (keypad[new Vec2(nextPos.x, currentPos.y)] != ' ')
+		   {
+			   cost = Math.Min(cost, EncodeKeys($"{horiz}{vert}A", keypads[1..], cache));
+		   }
+		   return cost;
+	   });
+
+	Keypad ParseKeypad(string keypad)
 	{
-		var numberDialGridCells = new List<Cell<char>>()
-		{
-			new Cell<char>() { Coordinate = new Coordinate() { X = 0, Y = 0 }, Value = '7'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 0 }, Value = '8'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 0 }, Value = '9'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 0, Y = 1 }, Value = '4'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 1 }, Value = '5'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 1 }, Value = '6'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 0, Y = 2 }, Value = '1'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 2 }, Value = '2'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 2 }, Value = '3'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 3 }, Value = '0'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 3 }, Value = 'A'  },
-		};
-
-		var controller = new List<Cell<char>>() {
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 0 }, Value = '^'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 0 }, Value = 'A'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 0, Y = 1 }, Value = '<'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 1, Y = 1 }, Value = 'v'  },
-			new Cell<char>() { Coordinate = new Coordinate() { X = 2, Y = 1 }, Value = '>'  }
-		};
-		var controledRobotGrid = new Grid<char>(controller);
-		var numberDailGrid = new Grid<char>(numberDialGridCells);
-
-
-		long totalComplexitity = 0;
-
-		var allPossibleNumPadMoves = GetAllPossibleMovesForGrid(numberDailGrid);
-
-		AllControllerSequences = GetAllPossibleMovesForGrid(numberDailGrid);
-		DirectionLenghts = AllControllerSequences.Select(_ => (_.Key , _.Value.FirstOrDefault().Count()))
-			.ToDictionary(_ =>  _.Key, _ => _.Item2 );
-
-		foreach (var code in codes)
-		{
-			var keyDailSolve = SolveArm(code, numberDailGrid);
-			var optimal = long.MaxValue;
-			var possibleInputs = new List<long>();
-			foreach (var sequence in keyDailSolve)
-			{
-				possibleInputs.Add(ComputeLenght2(sequence, controledRobotGrid));
-			}
-
-			var shortestDistance = possibleInputs.Min();
-			var parsedCode = long.Parse(code.Split('A').First());
-			totalComplexitity += shortestDistance * parsedCode;
-		}
-
-		return totalComplexitity;
-	}
-
-	private Dictionary<(Coordinate s, Coordinate e), int> DirectionLenghts { get; set; }
-
-	private Dictionary<(Coordinate start, Coordinate end), List<string>> AllControllerSequences { get; set;	 }
-
-	private Dictionary<(Coordinate start,Coordinate end,Grid<char> grid,int depth), long> Memoization { get; set; } = [];
-	private Dictionary<(string seqence ,int depth), long> Memoization2 { get; set; } = [];
-
-	public long ComputeLenght2(string sequence, Grid<char> grid, int depth = 25)
-	{
-		if (depth == 1)
-		{
-			var allLengths = 0;
-			foreach (var combination in ("A" + sequence).Zip(sequence))
-			{
-				var startPos = grid.Cells.FirstOrDefault(_ => _.Value == combination.First);
-				var endpost = grid.Cells.FirstOrDefault(_ => _.Value == combination.Second);
-
-				allLengths += DirectionLenghts[(startPos.Coordinate, endpost.Coordinate)];
-			}
-			return allLengths;
-		}
-
-		if (Memoization2.TryGetValue((sequence, depth), out var val))
-		{
-			return val;
-		}
-
-		long lenght = 0;
-
-		foreach (var pairOfSequences in ("A" + sequence).Zip(sequence))
-		{
-			var startPos = grid.Cells.FirstOrDefault(_ => _.Value == pairOfSequences.First).Coordinate;
-			var endpost = grid.Cells.FirstOrDefault(_ => _.Value == pairOfSequences.Second).Coordinate;
-			var minvalueOfSequence = AllControllerSequences[(startPos, endpost)]
-				.Select(_ => {
-					//Memoization2.TryAdd((pairOfSequences, depth), lenght);
-					var computedValue = ComputeLenght2(_, grid, depth - 1);
-					return computedValue;
-				}).Min();
-
-			lenght += minvalueOfSequence;
-		}
-
-		Memoization2.TryAdd((sequence, depth), lenght);
-		return lenght;
-	}
-
-	//public long ComputeLenght(
-	//	Coordinate start,
-	//	Coordinate end,
-	//	Grid<char> grid,
-	//	int depth = 25)
-	//{
-
-	//	if(depth == 1)
-	//	{
-	//		return DirectionLenghts[(start, end)];
-	//	}
-
-	//	if (Memoization.TryGetValue((start, end,grid,depth), out var val))
-	//	{
-	//		return val;
-	//	}
-
-
-	//	var optimal = long.MaxValue;
-
-	//	foreach(var seqences in AllControllerSequences[(start,end)])
-	//	{
-	//		var alloptions = new List<List<string>>();
-	//		long allLenghts = 0;
-	//		foreach (var combination in ("A" + seqences).Zip(seqences))
-	//		{
-	//			var startPos = grid.Cells.FirstOrDefault(_ => _.Value == combination.First);
-	//			var endpost = grid.Cells.FirstOrDefault(_ => _.Value == combination.Second);
-
-	//			allLenghts += ComputeLenght(startPos.Coordinate, endpost.Coordinate,grid,depth -1);
-	//		}
-
-	//		optimal = Math.Min(optimal, allLenghts);
-	//	}
-
-	//	Memoization.TryAdd((start,end,grid,depth),optimal);
-	//	return optimal;
-	//}
-
-	public Dictionary<(Coordinate start, Coordinate end), List<string>> GetAllPossibleMovesForGrid(Grid<char> grid)
-	{
-		var sequenceMap = new Dictionary<(Coordinate start, Coordinate end), List<string>>();
-
-		foreach (var startPoint in grid.Cells)
-		{
-			foreach (var endPoint in grid.Cells)
-			{
-				sequenceMap[(startPoint.Coordinate, endPoint.Coordinate)] = GetAllShortestPaths(startPoint.Coordinate, endPoint.Coordinate, grid);
-			}
-		}
-
-		return sequenceMap;
-	}
-
-	public List<string> SolveArm(string code, Grid<char> grid)
-	{
-		var sequenceMap = new Dictionary<(Coordinate start, Coordinate end), List<string>>();
-
-		foreach (var startPoint in grid.Cells)
-		{
-			foreach (var endPoint in grid.Cells)
-			{
-				sequenceMap[(startPoint.Coordinate, endPoint.Coordinate)] = GetAllShortestPaths(startPoint.Coordinate, endPoint.Coordinate, grid);
-			}
-		}
-
-		var alloptions = new List<List<string>>();
-
-		foreach (var combination in ("A" + code).Zip(code))
-		{
-			var startCord = grid.Cells.FirstOrDefault(_ => _.Value == combination.First);
-			var endCord = grid.Cells.FirstOrDefault(_ => _.Value == combination.Second);
-			var combi = sequenceMap[(startCord.Coordinate, endCord.Coordinate)];
-			alloptions.Add(combi);
-
-		}
-
-		var carmesianProduct = CartesianProduct(alloptions).
-			Select(_ => new string(_.SelectMany(_ => _).ToArray()));
-
-		return carmesianProduct.ToList();
-
-	}
-
-	public IEnumerable<IEnumerable<string>> CartesianProduct(IEnumerable<IEnumerable<string>> sequences)
-	{
-		IEnumerable<IEnumerable<string>> emptyProduct = new[] { Enumerable.Empty<string>() };
-		return sequences.Aggregate(
-			emptyProduct,
-			(accumulator, sequence) =>
-				from accseq in accumulator
-				from item in sequence
-				select accseq.Concat(new[] { item })
-			);
-	}
-
-
-	public List<string> GetAllShortestPaths(Coordinate startingPoint, Coordinate endPoint, Grid<char> grid)
-	{
-		if (startingPoint == endPoint)
-		{
-			return ["A"];
-		}
-
-
-		var que = new Queue<(Coordinate currentCord, string movementString)>();
-		que.Enqueue((startingPoint, ""));
-
-		var optimalScore = int.MaxValue;
-		var options = new List<string>();
-		while (que.Count > 0)
-		{
-			var current = que.Dequeue();
-
-			foreach (var direction in DirectionHelper.UpDownLeftRight)
-			{
-
-				var neighbouringCell = grid.GetCellBasedOnDirection(current.currentCord, direction);
-
-				if (
-					neighbouringCell == null ||
-					neighbouringCell.Value == 'X'
-				)
-				{
-					continue;
-				}
-
-				var directionSymbole = direction switch
-				{
-					DIRECTION.NORTH => '^',
-					DIRECTION.SOUTH => 'v',
-					DIRECTION.EAST => '>',
-					DIRECTION.WEST => '<',
-					_ => throw new NotImplementedException(),
-				};
-
-				if (neighbouringCell.Coordinate == endPoint)
-				{
-					if (optimalScore < current.movementString.Count())
-					{
-						return options;
-					}
-					optimalScore = current.movementString.Count();
-					options.Add(current.movementString + directionSymbole + "A");
-				}
-				else
-				{
-					que.Enqueue((neighbouringCell.Coordinate, current.movementString + directionSymbole));
-				}
-			}
-		}
-
-		return [];
+		var lines = keypad.Split("\n");
+		return (
+			from y in Enumerable.Range(0, lines.Length)
+			from x in Enumerable.Range(0, lines[0].Length)
+			select new KeyValuePair<Vec2, char>(new Vec2(x, -y), lines[y][x])
+		).ToDictionary();
 	}
 }

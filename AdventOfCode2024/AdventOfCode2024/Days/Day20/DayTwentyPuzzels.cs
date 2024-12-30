@@ -16,12 +16,12 @@ public class DayTwentyPuzzels
 		stopwatch.Start();
 		var result = PartOne(grid, 100);
 		stopwatch.Stop();
-		Console.WriteLine($"Day 20 part one: {result} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 20 part one: {result}, {stopwatch.ElapsedMilliseconds} ms");
 
 		stopwatch.Start();
 		var partTwo = PartTwo(grid, 100);
 		stopwatch.Stop();
-		Console.WriteLine($"Day 20 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 20 part two: {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public static int PartOne(Grid<char> grid,int minimumTimedSaved)
@@ -29,7 +29,11 @@ public class DayTwentyPuzzels
 		var startingPoint = grid.Cells.FirstOrDefault(_ => _.Value == 'S');
 		var endingPoint = grid.Cells.FirstOrDefault(_ => _.Value == 'E');
 
+		var stopwatch = Stopwatch.StartNew();
 		var path = GetPath(startingPoint.Coordinate, grid);
+
+		stopwatch.Stop();
+		var x = stopwatch.ElapsedMilliseconds;
 
 		var seenCheats = new HashSet<(Coordinate,Coordinate)>();
 
@@ -55,8 +59,11 @@ public class DayTwentyPuzzels
 
 	public static int PartTwo(Grid<char> grid, int minimumTimedSaved)
 	{
+		var stopwatch = Stopwatch.StartNew();
 		var startingPoint = grid.Cells.FirstOrDefault(_ => _.Value == 'S');
 		var endingPoint = grid.Cells.FirstOrDefault(_ => _.Value == 'E');
+		stopwatch.Stop();
+		var x = stopwatch.ElapsedMilliseconds;
 
 		var path = GetPath(startingPoint.Coordinate,grid);
 

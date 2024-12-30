@@ -1,5 +1,6 @@
 ﻿using AdventOfCode2024.Utils;
 using AdventOfCode2024.Utils.Grid;
+using System.Diagnostics;
 
 namespace AdventOfCode2024.Days.Day8;
 
@@ -12,16 +13,22 @@ public static class DayEightPuzzels
 
 		var attenaGrid = new Grid<char>(rawGrid);
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var partOne = PartOne(attenaGrid);
-		Console.WriteLine($"Day 8 part one {partOne}");
+		stopwatch.Stop();
 
+		Console.WriteLine($"Day 8 part one {partOne}, {stopwatch.ElapsedMilliseconds} ms");
+
+		stopwatch.Restart();
 		var partTwo = PartTwo(attenaGrid);
-		Console.WriteLine($"Day 8 part one {partTwo}");
+		stopwatch.Stop();
+
+		Console.WriteLine($"Day 8 part two {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public static int PartOne(Grid<char> grid)
 	{
-
 		var differentAntennas = grid.Cells
 			.Where(_ => _.Value != '.')
 			.GroupBy(_ => _.Value);

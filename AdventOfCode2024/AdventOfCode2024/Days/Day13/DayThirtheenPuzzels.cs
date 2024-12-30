@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2024.Utils;
+using System.Diagnostics;
 using System.Numerics;
 using System.Text.RegularExpressions;
 
@@ -25,10 +26,17 @@ public static class DayThirtheenPuzzels
 
 		});
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var resultOne = PartOne(input);
+		stopwatch.Stop();
+		
+		Console.WriteLine($"Day 13 part one: {resultOne}, {stopwatch.ElapsedMilliseconds} ms");
+
+		stopwatch.Restart();
 		var resultTwo = PartTwo(input);
-		Console.WriteLine($"Day 13 part one: {resultOne}");
-		Console.WriteLine($"Day 13 part two: {resultTwo}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 13 part two: {resultTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public static long PartOne(IEnumerable<(long ax, long ay, long bx, long by, long px, long py)> inputs)

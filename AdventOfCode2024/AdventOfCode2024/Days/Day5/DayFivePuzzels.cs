@@ -1,4 +1,6 @@
 ﻿
+using System.Diagnostics;
+
 namespace AdventOfCode2024.Days.Day5;
 
 public class DayFivePuzzels
@@ -26,11 +28,16 @@ public class DayFivePuzzels
 			.Select(_ => _.Split(",").Select(_ => int.Parse(_)).ToList()
 			).ToList();
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var awnserOne = PartOne(orderingRules, manuals);
-		Console.WriteLine($"Day 5 part one: {awnserOne}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 5 part one: {awnserOne}, {stopwatch.ElapsedMilliseconds} ms");
 
+		stopwatch.Restart();
 		var awnserTwo = PartTwo(orderingRules, manuals);
-		Console.WriteLine($"Day 5 part two: {awnserTwo}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 5 part two: {awnserTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public static int PartOne(List<PageOrderingRule> orderingRules, List<List<int>> manuals)

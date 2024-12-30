@@ -19,15 +19,18 @@ public class DayFourthteenPuzzles
 	public void HandlePuzzles()
 	{
 		var testinput = File.ReadAllLines(ReadInputFile.GetPathToInput(14)).ToList();
-		var result = PartOne(testinput, 103, 101);
-		Console.WriteLine($"Day 14 part one: {result}");
 
 		var stopwatch = new Stopwatch();
 		stopwatch.Start();
+		var result = PartOne(testinput, 103, 101);
+		stopwatch.Stop();
+		Console.WriteLine($"Day 14 part one: {result}, {stopwatch.ElapsedMilliseconds} ms");
+
+		stopwatch.Restart();
 		var result2 = PartTwo(testinput, 103, 101);
 		stopwatch.Stop();
 		
-		Console.WriteLine($"Day 14 part two: {result2}, ms : {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 14 part two: {result2}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public class Bot

@@ -2,6 +2,7 @@
 using AdventOfCode2024.Utils;
 using AdventOfCode2024.Utils.Grid;
 using System;
+using System.Diagnostics;
 
 namespace AdventOfCode2024.Days.Day12;
 
@@ -12,13 +13,19 @@ public class DayTwelvePuzzles
 		var rawGrid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToInput(12));
 
 		var grid = new Grid<char>(rawGrid);
+
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var partOne = PartOne(grid);
+		stopwatch.Stop();
 
-		Console.WriteLine($"Day 12 part one: {partOne}");
+		Console.WriteLine($"Day 12 part one: {partOne}, {stopwatch.ElapsedMilliseconds} ms");
 
+		stopwatch.Restart();
 		var parttwo = PartTwo(grid);
+		stopwatch.Stop();
 
-		Console.WriteLine($"Day 12 part one: {parttwo}");
+		Console.WriteLine($"Day 12 part two: {parttwo}, {stopwatch.ElapsedMilliseconds} ms");
 
 	}
 

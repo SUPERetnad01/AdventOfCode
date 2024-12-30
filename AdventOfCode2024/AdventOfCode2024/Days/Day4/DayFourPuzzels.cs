@@ -2,6 +2,7 @@
 using AdventOfCode2024.Utils.Grid;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,11 +15,16 @@ public static class DayFourPuzzels
 	{
 		var grid = ReadInputFile.GetGridChar(ReadInputFile.GetPathToInput(4));
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var awnserOne = PartOne(grid);
-		Console.WriteLine($"Day 4 part one: {awnserOne}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 4 part one: {awnserOne}, {stopwatch.ElapsedMilliseconds} ms");
 
+		stopwatch.Restart();
 		var awnserTwo = PartTwo(grid);
-		Console.WriteLine($"Day 4 part two: {awnserTwo}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 4 part two: {awnserTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public static int PartOne(List<List<char>> crosswordPuzzels)

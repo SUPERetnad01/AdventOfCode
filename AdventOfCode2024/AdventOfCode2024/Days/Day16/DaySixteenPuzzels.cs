@@ -15,12 +15,12 @@ public class DaySixteenPuzzels
 		stopwatch.Start();
 		var result = PartOne(grid);
 		stopwatch.Stop();
-		Console.WriteLine($"Day 16 part one: {result} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 16 part one: {result}, {stopwatch.ElapsedMilliseconds} ms");
 
 		stopwatch.Start();
 		var partTwo = PartTwo(grid);
 		stopwatch.Stop();
-		Console.WriteLine($"Day 16 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 16 part two: {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public int PartOne(Grid<char> grid)

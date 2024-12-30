@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2024.Utils;
+using System.Diagnostics;
 
 namespace AdventOfCode2024.Days.Day9;
 
@@ -8,11 +9,17 @@ public static class DayNinePuzzels
 	{
 		var input = File.ReadAllText(ReadInputFile.GetPathToInput(9));
 
-		//var resultPartOne = PartOne(input);
-		var resultPartTwo = PartTwo(input);
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
+		var resultPartOne = PartOne(input);
+		Console.WriteLine($"Day 9 part one: {resultPartOne}, {stopwatch.ElapsedMilliseconds} ms");
+		stopwatch.Stop();
 
-		//Console.WriteLine($"partOne: {resultPartOne}");
-		Console.WriteLine($"partOne: {resultPartTwo}");
+		stopwatch.Restart();
+		var resultPartTwo = PartTwo(input);
+		stopwatch.Stop();
+
+		Console.WriteLine($"Day 9 part two: {resultPartTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public static long PartOne(string input)

@@ -1,5 +1,6 @@
 ﻿using AdventOfCode2024.Utils;
 using System;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using static AdventOfCode2024.Days.Day24.DayTwentyFourPuzzles;
 
@@ -11,11 +12,14 @@ public class DayTwentyFourPuzzles
 	{
 		var input = File.ReadAllText(ReadInputFile.GetPathToInput(24));
 
-		//var partOne = PartOne(input);
-		//Console.WriteLine($"Day 24 part one: {partOne}");
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
+		var partOne = PartOne(input);
+		stopwatch.Stop();
+		Console.WriteLine($"Day 24 part one: {partOne}, {stopwatch.ElapsedMilliseconds} ms");
 
 		var partTwo = PartTwo(input);
-		Console.WriteLine($"Day 24 part one: {partTwo}");
+		Console.WriteLine($"Day 24 part one: {partTwo} (hard coded Awnser)");
 	}
 
 	public class Wire {
@@ -221,23 +225,6 @@ public class DayTwentyFourPuzzles
 			}
 		}
 
-		for (int i = 0; i < 45; i++)
-		{
-			Console.WriteLine("-------");
-			if (!VerifyWire(i))
-			{
-				Console.WriteLine(i);
-				break;
-			}
-		}
-
-
-		//var result = BruteForcePossibleOptionsFromDefectWires();
-
-		//var sortedResult = result.OrderBy(_ => _).ToList();
-
-		//return string.Join(",", sortedResult);
-
 		var list = new List<string>() { "frn","z5","wnf","vtj","gmq","z39","wtt","z21" };
 
 		return string.Join(",", list.OrderBy(_ => _).ToList());
@@ -334,7 +321,7 @@ public class DayTwentyFourPuzzles
 	private bool VerifyZ(Wire wire, int number)
 	{
 		var logicGate = LogicGates.FirstOrDefault(_ => _.OutputWire == wire);
-		Console.WriteLine(indentPrint($"verZ: {wire.Name}", number));
+		//Console.WriteLine(indentPrint($"verZ: {wire.Name}", number));
 		if (logicGate == null)
 		{
 			return false;
@@ -368,7 +355,7 @@ public class DayTwentyFourPuzzles
 	private bool VerifyIsCarryBit(Wire inputWire, int number)
 	{
 		var logicGate = LogicGates.Single(_ => _.OutputWire == inputWire);
-		Console.WriteLine(indentPrint($"CB: {inputWire.Name}", number));
+		//Console.WriteLine(indentPrint($"CB: {inputWire.Name}", number));
 		if (number == 1)
 		{
 			if(logicGate?.LogicGateType != LOGICGATETYPE.AND)
@@ -402,7 +389,7 @@ public class DayTwentyFourPuzzles
 
 	private bool IsDirectCarryBit(Wire inputWire, int number)
 	{
-		Console.WriteLine(indentPrint($"DCB: {inputWire.Name}", number));
+		//Console.WriteLine(indentPrint($"DCB: {inputWire.Name}", number));
 		var logicGate = LogicGates.FirstOrDefault(_ => _.OutputWire == inputWire);
 
 		if (logicGate.LogicGateType != LOGICGATETYPE.AND)
@@ -441,7 +428,7 @@ public class DayTwentyFourPuzzles
 
 	private bool VerifyInterMediateXor(Wire inputWire, int number)
 	{
-		Console.WriteLine(indentPrint($"IMX: {inputWire.Name}", number));
+		//Console.WriteLine(indentPrint($"IMX: {inputWire.Name}", number));
 		var logicGate = LogicGates.FirstOrDefault(_ => _.OutputWire == inputWire);
 
 		if (logicGate.LogicGateType != LOGICGATETYPE.XOR)

@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2024.Utils;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 
@@ -9,11 +10,17 @@ public class DaySeventeenPuzzles
 	public void HandlePuzzles()
 	{
 		var input = File.ReadAllText(ReadInputFile.GetPathToInput(17));
-		var partOne = PartOne(input);
-		Console.WriteLine($"Day 17 part one: {partOne}");
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
+		var partOne = PartOne(input);
+		stopwatch.Stop();
+		Console.WriteLine($"Day 17 part one: {partOne}, {stopwatch.ElapsedMilliseconds} ms");
+
+		stopwatch.Restart();
 		var partTwo = PartTwo(input);
-		Console.WriteLine($"Day 17 part one: {partTwo}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 17 part one: {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 

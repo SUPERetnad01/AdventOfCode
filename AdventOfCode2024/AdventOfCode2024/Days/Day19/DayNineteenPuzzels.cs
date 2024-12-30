@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2024.Utils;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2024.Days.Day19;
@@ -13,11 +14,16 @@ public class DayNineteenPuzzles
 		var availableTowels = regexResult.First().Split(',').Select(_ => _.Trim());
 		var allPatterns = regexResult[1].Split("\r\n").Select(_ => _.Trim());
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
 		var answerPartOne = new DayNineteenPuzzles().PartOne(availableTowels.ToList(), allPatterns.ToList());
-		Console.WriteLine($"Day 19 Part one: {answerPartOne}");
-
+		stopwatch.Stop();
+		Console.WriteLine($"Day 19 Part one: {answerPartOne}, {stopwatch.ElapsedMilliseconds} ms");
+		
+		stopwatch.Restart();
 		var answerPartTwo = new DayNineteenPuzzles().PartTwo(availableTowels.ToList(), allPatterns.ToList());
-		Console.WriteLine($"Day 19 Part two: {answerPartTwo}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 19 Part two: {answerPartTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public int PartOne(List<string> availableTowels, List<string> allPatterns)

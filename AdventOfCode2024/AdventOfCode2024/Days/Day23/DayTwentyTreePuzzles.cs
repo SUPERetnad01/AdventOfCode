@@ -20,13 +20,13 @@ public class DayTwentyTreePuzzles
 		var partOne = PartOne(input);
 		stopwatch.Stop();
 
-		Console.WriteLine($"Day 22 part one: {partOne} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 23 part one: {partOne}, {stopwatch.ElapsedMilliseconds} ms");
 
 		stopwatch.Restart();
 		var partTwo = PartTwo(input);
 		stopwatch.Stop();
 
-		Console.WriteLine($"Day 22 part two: {partTwo} time ms: {stopwatch.ElapsedMilliseconds}");
+		Console.WriteLine($"Day 23 part two: {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public struct ConnectedPcs
@@ -159,7 +159,7 @@ public class DayTwentyTreePuzzles
 	private HashSet<(string, string, string)> PairsOfThree(Dictionary<string, IEnumerable<string>> dictOfConnections)
 	{
 		var totalConnections = new HashSet<(string, string, string)>();
-
+		var orderList = new List<string>();
 		foreach (var (pc, connections) in dictOfConnections)
 		{
 
@@ -171,19 +171,19 @@ public class DayTwentyTreePuzzles
 					if (thirdConnections.Contains(pc))
 					{
 
+						orderList.Add(pc);
+						orderList.Add(thridPc);
+						orderList.Add(rr);
 
-						var r = new List<string>() {
-							pc, rr, thridPc
-						}.OrderBy(_ => _)
-						.ToList();
+						orderList.OrderBy(_ => _).ToArray();
 
-						var newTupple = (r[0], r[1], r[2]);
+						var newTupple = (orderList[0], orderList[1], orderList[2]);
 
 						if (!totalConnections.Contains(newTupple))
 						{
 							totalConnections.Add(newTupple);
 						}
-
+						orderList = [];
 						continue;
 					}
 				}

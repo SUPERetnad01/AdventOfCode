@@ -1,5 +1,6 @@
 ﻿using AdventOfCode2024.Utils;
 using AdventOfCode2024.Utils.Grid;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 
 namespace AdventOfCode2024.Days.Day15;
@@ -10,11 +11,16 @@ public class DayFiftheenPuzzels
 	{
 		var input = File.ReadAllText(ReadInputFile.GetPathToInput(15));
 
-		//var resultOne = PartOne(input);
-		//Console.WriteLine($"Day 15 part one: {resultOne}");
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
+		var resultOne = PartOne(input);
+		stopwatch.Stop();
+		Console.WriteLine($"Day 15 part one: {resultOne}, {stopwatch.ElapsedMilliseconds} ms");
 
+		stopwatch.Restart();
 		var resultTwo = PartTwo(input);
-		Console.WriteLine($"Day 15 part two: {resultTwo}");
+		stopwatch.Stop();
+		Console.WriteLine($"Day 15 part two: {resultTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public int PartOne(string input)

@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2024.Utils;
+using System.Diagnostics;
 
 namespace AdventOfCode2024.Days.Day1;
 
@@ -13,11 +14,16 @@ public static class DayOnePuzzels
 		var listOne = input.Select(_ => int.Parse(_.Split("   ")[0])).ToList();
 		var listTwo = input.Select(_ => int.Parse(_.Split("   ")[1])).ToList();
 
+		var stopWatch = new Stopwatch();
+		stopWatch.Start();
 		var partOne = PartOne(listOne, listTwo);
-		Console.WriteLine($"Day1 PartOne: {partOne}");
+		stopWatch.Stop();
+		Console.WriteLine($"Day 1 part one: {partOne} , {stopWatch.ElapsedMilliseconds} ms");
 
+		stopWatch.Restart();
 		var partTwo = PartTwo(listOne, listTwo);
-		Console.WriteLine($"Day1 PartTwo: {partTwo}");
+		stopWatch.Stop();
+		Console.WriteLine($"Day 1 part two: {partTwo}, {stopWatch.ElapsedMilliseconds} ms");
 	}
 
 	public static int PartOne(List<int> listOne, List<int> listTwo)

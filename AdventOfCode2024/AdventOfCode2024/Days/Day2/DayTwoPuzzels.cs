@@ -1,4 +1,5 @@
 ﻿using AdventOfCode2024.Utils;
+using System.Diagnostics;
 
 namespace AdventOfCode2024.Days.Day2;
 
@@ -7,11 +8,18 @@ public static class DayTwoPuzzels
 	public static void HandleQuestions() 
 	{
 		var grid = ReadInputFile.GetGrid(ReadInputFile.GetPathToInput(2));
-		var partOne = PartOne(grid);
-		Console.WriteLine($"Day2 PartOne: {partOne}");
 
+		var stopwatch = new Stopwatch();
+		stopwatch.Start();
+		var partOne = PartOne(grid);
+		stopwatch.Stop();
+		Console.WriteLine($"Day 2 part one: {partOne}, {stopwatch.ElapsedMilliseconds} ms");
+		
+		stopwatch.Restart();
 		var partTwo = PartTwo(grid);
-		Console.WriteLine($"Day2 PartTwo: {partTwo}");
+		stopwatch.Stop();
+
+		Console.WriteLine($"Day 2 part two: {partTwo}, {stopwatch.ElapsedMilliseconds} ms");
 	}
 
 	public static int PartOne(List<List<int>> reports)
